@@ -1,0 +1,8 @@
+triponometry:
+  weather:
+    url: http://api.openweathermap.org
+    api-key: 89d747aabdeffa15aa1022f415cb3960
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
