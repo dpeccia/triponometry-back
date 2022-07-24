@@ -1,0 +1,98 @@
+{
+  "address_components": [
+    {
+      "long_name": "Plaza Arenales",
+      "short_name": "Plaza Arenales",
+      "types": [
+        "establishment",
+        "park",
+        "point_of_interest",
+        "tourist_attraction"
+      ]
+    },
+    {
+      "long_name": "4058",
+      "short_name": "4058",
+      "types": [
+        "street_number"
+      ]
+    },
+    {
+      "long_name": "Mercedes",
+      "short_name": "Mercedes",
+      "types": [
+        "route"
+      ]
+    },
+    {
+      "long_name": "Villa Devoto",
+      "short_name": "Villa Devoto",
+      "types": [
+        "political",
+        "sublocality",
+        "sublocality_level_1"
+      ]
+    },
+    {
+      "long_name": "Comuna 11",
+      "short_name": "Comuna 11",
+      "types": [
+        "administrative_area_level_2",
+        "political"
+      ]
+    },
+    {
+      "long_name": "Buenos Aires",
+      "short_name": "CABA",
+      "types": [
+        "administrative_area_level_1",
+        "political"
+      ]
+    },
+    {
+      "long_name": "Argentina",
+      "short_name": "AR",
+      "types": [
+        "country",
+        "political"
+      ]
+    },
+    {
+      "long_name": "C1419",
+      "short_name": "C1419",
+      "types": [
+        "postal_code"
+      ]
+    }
+  ],
+  "formatted_address": "Plaza Arenales, Mercedes 4058, C1419 CABA, Argentina",
+  "geometry": {
+    "location": {
+      "lat": -34.5993652,
+      "lng": -58.5122799
+    },
+    "location_type": "ROOFTOP",
+    "viewport": {
+      "northeast": {
+        "lat": -34.5979932197085,
+        "lng": -58.51090976970849
+      },
+      "southwest": {
+        "lat": -34.6006911802915,
+        "lng": -58.5136077302915
+      }
+    }
+  },
+  "partial_match": true,
+  "place_id": "ChIJwewKkMu3vJUREHcKbgVc5yw",
+  "plus_code": {
+    "compound_code": "CF2Q+73 Buenos Aires, Argentina",
+    "global_code": "48Q3CF2Q+73"
+  },
+  "types": [
+    "establishment",
+    "park",
+    "point_of_interest",
+    "tourist_attraction"
+  ]
+}

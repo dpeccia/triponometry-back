@@ -1,0 +1,18 @@
+{
+  "destination_addresses": [
+    "2320 N Main St, Miami, OK 74354, USA"
+  ],
+  "origin_addresses": [
+    "48.856052,2.3537521"
+  ],
+  "rows": [
+    {
+      "elements": [
+        {
+          "status": "ZERO_RESULTS"
+        }
+      ]
+    }
+  ],
+  "status": "OK"
+}

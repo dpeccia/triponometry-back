@@ -2,6 +2,11 @@ triponometry:
   weather:
     url: http://api.openweathermap.org
     api-key: 89d747aabdeffa15aa1022f415cb3960
+  google:
+    ##api-key: AIzaSyDoy_IiMQhsVTF_7ViKzFUa8r9ir7BADBw -> MAGA
+    api-key: AIzaSyDYvqEW16HdPdIRXCncIIGtjQ-4bbQk0i0
+  distance:
+    url: https://maps.googleapis.com/maps/api/distancematrix/json
 spring:
   mvc:
     pathmatch:

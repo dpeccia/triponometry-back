@@ -24,6 +24,7 @@ dependencies {
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.+")
 	implementation("io.springfox:springfox-boot-starter:3.0.0")
 	implementation("io.springfox:springfox-swagger-ui:3.0.0")
+	implementation("com.google.maps:google-maps-services:2.1.0")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("com.github.tomakehurst:wiremock:2.27.2")
 	testImplementation("com.ninja-squad:springmockk:3.0.1")
