@@ -25,6 +25,7 @@ dependencies {
 	implementation("io.springfox:springfox-boot-starter:3.0.0")
 	implementation("io.springfox:springfox-swagger-ui:3.0.0")
 	implementation("com.google.maps:google-maps-services:2.1.0")
+	implementation ("org.mnode.ical4j:ical4j:3.2.3")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("com.github.tomakehurst:wiremock:2.27.2")
 	testImplementation("com.ninja-squad:springmockk:3.0.1")
