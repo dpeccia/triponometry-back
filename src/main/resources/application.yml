@@ -7,6 +7,9 @@ triponometry:
     api-key: AIzaSyDYvqEW16HdPdIRXCncIIGtjQ-4bbQk0i0
   distance:
     url: https://maps.googleapis.com/maps/api/distancematrix/json
+  genetic-algorithm:
+    individuals-qty: 1000
+    cycles-qty: 100
 spring:
   mvc:
     pathmatch:

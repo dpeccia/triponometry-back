@@ -5,12 +5,13 @@ import utn.triponometry.domain.external.Geocode
 
 @ConfigurationProperties(prefix = "triponometry")
 data class TriponometryProperties(
-        val weather: Weather = Weather(),
-        val google: Google = Google(),
-        val distance: Distance = Distance()
-
+    val weather: Weather = Weather(),
+    val google: Google = Google(),
+    val distance: Distance = Distance(),
+    val geneticAlgorithm: GeneticAlgorithm = GeneticAlgorithm()
 )
 
 data class Weather(var url: String = "", var apiKey: String = "")
 data class Distance(var url: String = "")
 data class Google(var apiKey: String = "")
+data class GeneticAlgorithm(var individualsQty: Int = 1000, val cyclesQty: Int = 100)

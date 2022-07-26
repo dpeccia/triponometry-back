@@ -6,12 +6,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import utn.triponometry.domain.Coordinates
 import utn.triponometry.domain.external.dtos.DistanceMatrixResponseDto
-import utn.triponometry.domain.external.dtos.DistanceRow
-import utn.triponometry.domain.external.dtos.Elements
-import utn.triponometry.domain.external.dtos.Value
-import utn.triponometry.properties.Distance
-import utn.triponometry.properties.Google
-import utn.triponometry.properties.TriponometryProperties
 import java.io.File
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -51,15 +45,15 @@ class DistanceMatrixAdapterTest {
 
         Assertions.assertEquals("Baigorria 3263, C1417 FRK, Buenos Aires, Argentina",places[0].name)
         Assertions.assertEquals(0, places[0].id)
-        Assertions.assertEquals(4168, places[0].distances[1])
-        Assertions.assertEquals(1578, places[0].distances[2])
-        Assertions.assertEquals(5027, places[0].distances[3])
+        Assertions.assertEquals(4168, places[0].times[1])
+        Assertions.assertEquals(1578, places[0].times[2])
+        Assertions.assertEquals(5027, places[0].times[3])
 
         Assertions.assertEquals("Acceso A Patricias Argentinas 171, C1414 CABA, Argentina",places[1].name)
         Assertions.assertEquals(1, places[1].id)
-        Assertions.assertEquals(4200, places[1].distances[0])
-        Assertions.assertEquals(5537, places[1].distances[2])
-        Assertions.assertEquals(1082, places[1].distances[3])
+        Assertions.assertEquals(4200, places[1].times[0])
+        Assertions.assertEquals(5537, places[1].times[2])
+        Assertions.assertEquals(1082, places[1].times[3])
 
     }
 }
