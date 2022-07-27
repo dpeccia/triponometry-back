@@ -6,9 +6,9 @@ import org.junit.jupiter.api.Test
 import utn.triponometry.domain.Place
 
 class IndividualTest {
-    val hotel = Place(1, "Hotel", mapOf(2 to 30, 3 to 60))
-    val colloseum = Place(2, "Colloseum", mapOf(1 to 25, 3 to 20))
-    val fontanaDiTrevi = Place(3, "Fontana Di Trevi", mapOf(1 to 50, 2 to 20))
+    val hotel = Place(0, "Hotel", mapOf(1 to 30, 2 to 60))
+    val colloseum = Place(1, "Colloseum", mapOf(0 to 25, 2 to 20))
+    val fontanaDiTrevi = Place(2, "Fontana Di Trevi", mapOf(0 to 50, 1 to 20))
 
     @Test
     fun `the fitness function is calculated with the total time it takes to go from each place to the others, counting the return to the first one`() {

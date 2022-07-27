@@ -11,10 +11,10 @@ import utn.triponometry.domain.Place
 import utn.triponometry.helpers.Random
 
 class CrossoverTest {
-    val hotel = Place(1, "Hotel", mapOf(2 to 30, 3 to 60, 4 to 35))
-    val colloseum = Place(2, "Colloseum", mapOf(1 to 25, 3 to 20, 4 to 25))
-    val fontanaDiTrevi = Place(3, "Fontana Di Trevi", mapOf(1 to 50, 2 to 20, 4 to 25))
-    val vaticano = Place(4, "Vaticano", mapOf(1 to 40, 2 to 30, 3 to 30))
+    val hotel = Place(0, "Hotel", mapOf(1 to 30, 2 to 60, 3 to 35))
+    val colloseum = Place(1, "Colloseum", mapOf(0 to 25, 2 to 20, 3 to 25))
+    val fontanaDiTrevi = Place(2, "Fontana Di Trevi", mapOf(0 to 50, 1 to 20, 3 to 25))
+    val vaticano = Place(3, "Vaticano", mapOf(0 to 40, 1 to 30, 2 to 30))
 
     val trip1 = Individual(listOf(hotel, colloseum, fontanaDiTrevi, vaticano))
     val trip2 = Individual(listOf(colloseum, fontanaDiTrevi, vaticano, hotel))

@@ -36,7 +36,6 @@ class DistanceMatrixAdapterTest {
 
     @Test
     fun `mapping distance matrix response`() {
-
         val file = File("src/test/resources/distance_matrix.json")
         val fileContent = file.readText()
         val matrix = Gson().fromJson(fileContent, DistanceMatrixResponseDto::class.java)
@@ -45,15 +44,15 @@ class DistanceMatrixAdapterTest {
 
         Assertions.assertEquals("Baigorria 3263, C1417 FRK, Buenos Aires, Argentina",places[0].name)
         Assertions.assertEquals(0, places[0].id)
-        Assertions.assertEquals(4168, places[0].times[1])
-        Assertions.assertEquals(1578, places[0].times[2])
-        Assertions.assertEquals(5027, places[0].times[3])
+        Assertions.assertEquals(69, places[0].durations[1])
+        Assertions.assertEquals(26, places[0].durations[2])
+        Assertions.assertEquals(83, places[0].durations[3])
 
         Assertions.assertEquals("Acceso A Patricias Argentinas 171, C1414 CABA, Argentina",places[1].name)
         Assertions.assertEquals(1, places[1].id)
-        Assertions.assertEquals(4200, places[1].times[0])
-        Assertions.assertEquals(5537, places[1].times[2])
-        Assertions.assertEquals(1082, places[1].times[3])
+        Assertions.assertEquals(70, places[1].durations[0])
+        Assertions.assertEquals(92, places[1].durations[2])
+        Assertions.assertEquals(18, places[1].durations[3])
 
     }
 }

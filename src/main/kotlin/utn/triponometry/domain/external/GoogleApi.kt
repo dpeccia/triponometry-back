@@ -4,6 +4,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.google.gson.Gson
 import com.google.maps.GeoApiContext
 import com.google.maps.GeocodingApi
+import com.google.maps.model.TravelMode
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
@@ -14,6 +15,7 @@ import utn.triponometry.domain.external.dtos.DistanceMatrixResponseDto
 import utn.triponometry.helpers.GoogleDistanceMatrixApiException
 import utn.triponometry.helpers.GoogleGeocodeApiException
 import utn.triponometry.properties.TriponometryProperties
+import java.util.*
 
 @Component
 @EnableAutoConfiguration
@@ -46,20 +48,21 @@ class GoogleApi (triponometryProperties: TriponometryProperties) {
         }
     }
 
-    fun getListOfPlaces(places: List<Coordinates>): List<Place> {
-        val distancesMatrix = getDistanceMatrix(places, places)
+    fun getListOfPlaces(places: List<Coordinates>, travelMode: TravelMode): List<Place> {
+        val distancesMatrix = getDistanceMatrix(places, places, travelMode)
         return matrixAdapter.matrixToListOfPlaces(distancesMatrix!!)
     }
 
-    fun getDistanceMatrix(origins: List<Coordinates>, destinations: List<Coordinates>): DistanceMatrixResponseDto? {
-            val orArray = matrixAdapter.mapArrayToString(origins)
-            val desArray = matrixAdapter.mapArrayToString(destinations)
-            val results = getMatrix(baseUrl, orArray, desArray,mode)
-            return jacksonObjectMapper().readerFor(DistanceMatrixResponseDto::class.java).readValue(results)
+    fun getDistanceMatrix(origins: List<Coordinates>, destinations: List<Coordinates>, travelMode: TravelMode): DistanceMatrixResponseDto? {
+        val orArray = matrixAdapter.mapArrayToString(origins)
+        val desArray = matrixAdapter.mapArrayToString(destinations)
+        val results = getMatrix(baseUrl, orArray, desArray, travelMode)
+        return jacksonObjectMapper().readerFor(DistanceMatrixResponseDto::class.java).readValue(results)
     }
 
-    fun getMatrix(baseUrl: String, origins: String, destinations: String, mode: String): String {
-        val endpoint = "?destinations=${destinations}&origins=${origins}&mode=${mode}&sensor=false"
+    fun getMatrix(baseUrl: String, origins: String, destinations: String, mode: TravelMode): String {
+        val travelMode = mode.name.lowercase(Locale.getDefault())
+        val endpoint = "?destinations=${destinations}&origins=${origins}&mode=$travelMode&sensor=false"
         return getFromDistanceMatrixApi(baseUrl, endpoint)
     }
 

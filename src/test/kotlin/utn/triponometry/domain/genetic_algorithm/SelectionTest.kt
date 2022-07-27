@@ -9,9 +9,9 @@ import utn.triponometry.domain.Place
 import utn.triponometry.helpers.Random
 
 class SelectionTest {
-    val hotel = Place(1, "Hotel", mapOf(2 to 30, 3 to 60))
-    val colloseum = Place(2, "Colloseum", mapOf(1 to 25, 3 to 20))
-    val fontanaDiTrevi = Place(3, "Fontana Di Trevi", mapOf(1 to 50, 2 to 20))
+    val hotel = Place(0, "Hotel", mapOf(1 to 30, 2 to 60))
+    val colloseum = Place(1, "Colloseum", mapOf(0 to 25, 2 to 20))
+    val fontanaDiTrevi = Place(2, "Fontana Di Trevi", mapOf(0 to 50, 1 to 20))
 
     val trip1 = Individual(listOf(hotel, colloseum, fontanaDiTrevi))
     val trip2 = Individual(listOf(colloseum, fontanaDiTrevi, hotel))
