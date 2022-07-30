@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import utn.triponometry.domain.CalculatorInputs
 import utn.triponometry.domain.Coordinates
-import utn.triponometry.domain.Place
 import utn.triponometry.services.TripService
 
 @RestController
@@ -23,9 +23,10 @@ class TripController(private val tripService: TripService) {
     }
 
     @PostMapping("/optimal-route")
-    @ApiOperation("Calculates the optimal route between a list of places")
-    fun calculateOptimalRoute(@RequestBody places: List<Place>): ResponseEntity<Any> {
-        val bestRoute = tripService.calculateOptimalRoute(places)
-        return ResponseEntity.ok("Best Route: ${bestRoute.places.map { it.id }}")
+    @ApiOperation("Calculates the optimal route for the given calculator inputs")
+    fun calculateOptimalRoute(@RequestBody calculatorInputs: CalculatorInputs): ResponseEntity<Any> {
+        val optimalRoute = tripService.calculateOptimalRoute(calculatorInputs)
+
+        return ResponseEntity.ok(optimalRoute)
     }
 }

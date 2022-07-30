@@ -1,0 +1,42 @@
+[
+  {
+    "number": 1,
+    "route": [
+      {
+        "id": 0,
+        "name": "Hotel",
+        "durations": {"1":30,"2":60,"3":35},
+        "timeSpent": null
+      },
+      {
+        "id": 1,
+        "name": "Colloseum",
+        "durations": {"0":25,"2":20,"3":25},
+        "timeSpent": 120
+      },
+      {
+        "id": 3,
+        "name": "Vaticano",
+        "durations": {"0":40,"1":30,"2":30},
+        "timeSpent": 120
+      }
+    ]
+  },
+  {
+    "number": 2,
+    "route": [
+      {
+        "id": 0,
+        "name": "Hotel",
+        "durations": {"1":30,"2":60,"3":35},
+        "timeSpent": null
+      },
+      {
+        "id": 2,
+        "name": "Fontana Di Trevi",
+        "durations": {"0":50,"1":20,"3":25},
+        "timeSpent": 180
+      }
+    ]
+  }
+]
