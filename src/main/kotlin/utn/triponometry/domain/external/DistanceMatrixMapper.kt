@@ -21,10 +21,10 @@ class DistanceMatrixAdapter {
         return concatString.dropLast(1)
     }
 
-    fun matrixToListOfPlaces(matrix: DistanceMatrixResponseDto): List<Place> {
+    fun matrixToListOfPlaces(matrix: DistanceMatrixResponseDto,coordinates: List<Coordinates>): List<Place> {
         val places = mutableListOf<Place>()
         matrix.rows.forEachIndexed { i, _ -> places.add(
-            Place(i,matrix.origin_addresses[i],elementsToDistanceMap(i, matrix.rows[i].elements))
+            Place(i,matrix.origin_addresses[i],elementsToDistanceMap(i, matrix.rows[i].elements),0,coordinates[i])
         )}
         return places.toList()
     }

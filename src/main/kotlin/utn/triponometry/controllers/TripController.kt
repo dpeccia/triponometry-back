@@ -2,14 +2,12 @@ package utn.triponometry.controllers
 
 import com.google.maps.model.TravelMode
 import io.swagger.annotations.ApiOperation
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import utn.triponometry.domain.CalculatorInputs
 import utn.triponometry.domain.Coordinates
+import utn.triponometry.domain.Day
 import utn.triponometry.services.TripService
 
 @RestController
@@ -28,5 +26,13 @@ class TripController(private val tripService: TripService) {
         val optimalRoute = tripService.calculateOptimalRoute(calculatorInputs)
 
         return ResponseEntity.ok(optimalRoute)
+    }
+
+    @CrossOrigin(origins = ["http://localhost:3000"])
+    @PostMapping("/kmlFile/{travelMode}",produces = [MediaType.APPLICATION_XML_VALUE])
+    @ApiOperation("Gets the kml file with the recommended route")
+    fun getMap(@PathVariable travelMode: TravelMode, @RequestBody days: List<Day>): ResponseEntity<String> {
+        val response = tripService.getMapFileData(days,travelMode)
+        return ResponseEntity.ok(response)
     }
 }

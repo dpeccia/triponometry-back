@@ -2,8 +2,12 @@ package utn.triponometry.domain.external
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.google.gson.Gson
+import com.google.maps.DirectionsApi
+import com.google.maps.DirectionsApiRequest
 import com.google.maps.GeoApiContext
 import com.google.maps.GeocodingApi
+import com.google.maps.model.DirectionsResult
+import com.google.maps.model.GeocodingResult
 import com.google.maps.model.TravelMode
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.http.HttpStatus
@@ -50,7 +54,7 @@ class GoogleApi (triponometryProperties: TriponometryProperties) {
 
     fun getListOfPlaces(places: List<Coordinates>, travelMode: TravelMode): List<Place> {
         val distancesMatrix = getDistanceMatrix(places, places, travelMode)
-        return matrixAdapter.matrixToListOfPlaces(distancesMatrix!!)
+        return matrixAdapter.matrixToListOfPlaces(distancesMatrix!!,places)
     }
 
     fun getDistanceMatrix(origins: List<Coordinates>, destinations: List<Coordinates>, travelMode: TravelMode): DistanceMatrixResponseDto? {
@@ -76,4 +80,28 @@ class GoogleApi (triponometryProperties: TriponometryProperties) {
             }
             .bodyToMono(String::class.java)
             .block() ?: throw GoogleDistanceMatrixApiException("There was an error with the Distance Matrix Server")
+
+    fun getDirectionsApi(coordinatesO: Coordinates, coordinatesD: MutableList<Coordinates?>, travelMode: TravelMode): DirectionsResult? {
+        try {
+            val context = buildContext()
+            val directionsApiRequest = DirectionsApiRequest(context)
+            directionsApiRequest.origin("${coordinatesO.latitude},${coordinatesO.longitude}")
+            directionsApiRequest.destination("${coordinatesO.latitude},${coordinatesO.longitude}")
+
+            var waypoints = ""
+            coordinatesD.forEach { s -> waypoints += "${s?.latitude},${s?.longitude}|"}
+            waypoints.dropLast(1)
+            directionsApiRequest.waypoints(waypoints)
+
+            directionsApiRequest.mode(travelMode)
+            val results = directionsApiRequest.await()
+            shutdown(context!!)
+
+            return results
+
+        } catch (e: Exception) {
+            throw GoogleGeocodeApiException("There was an error with the Directions Server")
+        }
+    }
 }
+

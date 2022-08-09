@@ -40,7 +40,14 @@ class DistanceMatrixAdapterTest {
         val fileContent = file.readText()
         val matrix = Gson().fromJson(fileContent, DistanceMatrixResponseDto::class.java)
 
-        val places = distanceMatrixAdapter.matrixToListOfPlaces(matrix)
+        val coordinates = listOf(
+            Coordinates(-34.598682,-58.511546),
+            Coordinates(-34.616954,-58.433532),
+            Coordinates(-34.605102,-58.493364),
+            Coordinates(-34.606149,-58.438509)
+        )
+
+        val places = distanceMatrixAdapter.matrixToListOfPlaces(matrix,coordinates)
 
         Assertions.assertEquals("Baigorria 3263, C1417 FRK, Buenos Aires, Argentina",places[0].name)
         Assertions.assertEquals(0, places[0].id)

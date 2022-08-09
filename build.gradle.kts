@@ -29,6 +29,8 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("com.github.tomakehurst:wiremock:2.27.2")
 	testImplementation("com.ninja-squad:springmockk:3.0.1")
+	implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.1")
+	implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.13.1")
 }
 
 tasks.withType<KotlinCompile> {

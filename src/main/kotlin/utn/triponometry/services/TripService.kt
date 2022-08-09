@@ -6,6 +6,7 @@ import utn.triponometry.domain.CalculatorInputs
 import utn.triponometry.domain.Coordinates
 import utn.triponometry.domain.Day
 import utn.triponometry.domain.Place
+import utn.triponometry.domain.external.Directions
 import utn.triponometry.domain.external.GoogleApi
 import utn.triponometry.domain.genetic_algorithm.GeneticAlgorithm
 import utn.triponometry.domain.genetic_algorithm.Individual
@@ -54,7 +55,7 @@ class TripService(val triponometryProperties: TriponometryProperties, val google
     fun createRouteForDay(day: Day, activitiesNotInRoutes: MutableList<Place>, timePerDay: Int) {
         val activitiesAlreadyInRoute = mutableListOf<Place>()
 
-        run block@ {
+        run block@{
             activitiesNotInRoutes.forEach { activity ->
                 if (!day.hasSpaceFor(activity, timePerDay))
                     return@block
@@ -66,4 +67,9 @@ class TripService(val triponometryProperties: TriponometryProperties, val google
 
         activitiesNotInRoutes.removeAll(activitiesAlreadyInRoute)
     }
+
+
+    fun getMapFileData(locations: List<Day>, travelMode: TravelMode): String =
+        Directions(triponometryProperties, googleApi).createKMLFile(locations, travelMode)
+
 }

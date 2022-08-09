@@ -1,0 +1,695 @@
+{
+  "geocoded_waypoints": [
+    {
+      "geocoder_status": "OK",
+      "place_id": "ChIJI2nAmya2vJUR5ZRzp77pCXk",
+      "types": [
+        "street_address"
+      ]
+    },
+    {
+      "geocoder_status": "OK",
+      "place_id": "ChIJhcMKCwq2vJURXM_Gy2VG7Zg",
+      "types": [
+        "street_address"
+      ]
+    },
+    {
+      "geocoder_status": "OK",
+      "place_id": "ChIJI2nAmya2vJUR5ZRzp77pCXk",
+      "types": [
+        "street_address"
+      ]
+    }
+  ],
+  "routes": [
+    {
+      "bounds": {
+        "northeast": {
+          "lat": -34.5812894,
+          "lng": -58.4619668
+        },
+        "southwest": {
+          "lat": -34.6054798,
+          "lng": -58.4995458
+        }
+      },
+      "copyrights": "Map data ©2022",
+      "legs": [
+        {
+          "distance": {
+            "text": "5.6 km",
+            "value": 5612
+          },
+          "duration": {
+            "text": "18 mins",
+            "value": 1069
+          },
+          "end_address": "Av Triunvirato 2899, C1427AAB CABA, Argentina",
+          "end_location": {
+            "lat": -34.5850248,
+            "lng": -58.46333749999999
+          },
+          "start_address": "Baigorria 3263, C1417 FRK, Buenos Aires, Argentina",
+          "start_location": {
+            "lat": -34.6050994,
+            "lng": -58.4933662
+          },
+          "steps": [
+            {
+              "distance": {
+                "text": "73 m",
+                "value": 73
+              },
+              "duration": {
+                "text": "1 min",
+                "value": 17
+              },
+              "end_location": {
+                "lat": -34.6054798,
+                "lng": -58.49401359999999
+              },
+              "html_instructions": "Head <b>southwest</b> on <b>Pl. Aristóbulo del valle</b>/<wbr/><b>Baigorria</b> toward <b>Campana</b>",
+              "polyline": {
+                "points": "zxerEpn_dJ@Bp@rAVf@"
+              },
+              "start_location": {
+                "lat": -34.6050994,
+                "lng": -58.4933662
+              },
+              "travel_mode": "DRIVING"
+            },
+            {
+              "distance": {
+                "text": "0.9 km",
+                "value": 948
+              },
+              "duration": {
+                "text": "4 mins",
+                "value": 233
+              },
+              "end_location": {
+                "lat": -34.5982852,
+                "lng": -58.4995458
+              },
+              "html_instructions": "Turn <b>right</b> onto <b>Campana</b>",
+              "maneuver": "turn-right",
+              "polyline": {
+                "points": "f{erEpr_dJa@^uAnAq@p@]R{@j@mAx@MHy@j@cAp@KHe@\\mAx@e@ZQJiA|@[NEBGDED]RkD`C_@VoEzCmBnAeBlA"
+              },
+              "start_location": {
+                "lat": -34.6054798,
+                "lng": -58.49401359999999
+              },
+              "travel_mode": "DRIVING"
+            },
+            {
+              "distance": {
+                "text": "1.7 km",
+                "value": 1706
+              },
+              "duration": {
+                "text": "5 mins",
+                "value": 318
+              },
+              "end_location": {
+                "lat": -34.5891039,
+                "lng": -58.48471789999999
+              },
+              "html_instructions": "Turn <b>right</b> onto <b>Av. Francisco Beiró</b>",
+              "maneuver": "turn-right",
+              "polyline": {
+                "points": "hndrEdu`dJgDiGWg@w@{Am@gAOQWk@aDgGuAkCaAmBIQi@_AyAyC[q@Ue@Qg@GMQe@M_@I[Uu@G]I[}@sBm@kA]o@[m@MSWa@U]KOOOMKCAMCUYiAoAOQIM_BuCk@iAkC_FoAeC]k@g@cAOYc@u@"
+              },
+              "start_location": {
+                "lat": -34.5982852,
+                "lng": -58.4995458
+              },
+              "travel_mode": "DRIVING"
+            },
+            {
+              "distance": {
+                "text": "1.3 km",
+                "value": 1286
+              },
+              "duration": {
+                "text": "4 mins",
+                "value": 218
+              },
+              "end_location": {
+                "lat": -34.5812894,
+                "lng": -58.4743577
+              },
+              "html_instructions": "Continue onto <b>Av. de los Incas</b>",
+              "polyline": {
+                "points": "ztbrEnx}cJa@m@e@q@yBcDm@y@wAuBuAyBa@o@iCoDQW{AsBeBeCiAcBuB}CU[kEmGmDgFuCaEUa@"
+              },
+              "start_location": {
+                "lat": -34.5891039,
+                "lng": -58.48471789999999
+              },
+              "travel_mode": "DRIVING"
+            },
+            {
+              "distance": {
+                "text": "0.5 km",
+                "value": 482
+              },
+              "duration": {
+                "text": "1 min",
+                "value": 73
+              },
+              "end_location": {
+                "lat": -34.5830645,
+                "lng": -58.46963640000001
+              },
+              "html_instructions": "Turn <b>right</b> onto <b>Av Triunvirato</b>",
+              "maneuver": "turn-right",
+              "polyline": {
+                "points": "`darEvw{cJ|@u@FIBGFMJk@r@mDn@uCpAoFz@_EPy@"
+              },
+              "start_location": {
+                "lat": -34.5812894,
+                "lng": -58.4743577
+              },
+              "travel_mode": "DRIVING"
+            },
+            {
+              "distance": {
+                "text": "63 m",
+                "value": 63
+              },
+              "duration": {
+                "text": "1 min",
+                "value": 18
+              },
+              "end_location": {
+                "lat": -34.5826682,
+                "lng": -58.4695656
+              },
+              "html_instructions": "Turn <b>left</b> onto <b>Av. Chorroarín</b>",
+              "maneuver": "turn-left",
+              "polyline": {
+                "points": "boarEfzzcJF[Q@SJIAe@@"
+              },
+              "start_location": {
+                "lat": -34.5830645,
+                "lng": -58.46963640000001
+              },
+              "travel_mode": "DRIVING"
+            },
+            {
+              "distance": {
+                "text": "0.7 km",
+                "value": 696
+              },
+              "duration": {
+                "text": "2 mins",
+                "value": 110
+              },
+              "end_location": {
+                "lat": -34.5828967,
+                "lng": -58.4619668
+              },
+              "html_instructions": "Turn <b>right</b> onto <b>Fraga</b>",
+              "maneuver": "turn-right",
+              "polyline": {
+                "points": "tlarExyzcJDsEFcFBcFHsGFcHH{G"
+              },
+              "start_location": {
+                "lat": -34.5826682,
+                "lng": -58.4695656
+              },
+              "travel_mode": "DRIVING"
+            },
+            {
+              "distance": {
+                "text": "0.2 km",
+                "value": 242
+              },
+              "duration": {
+                "text": "1 min",
+                "value": 52
+              },
+              "end_location": {
+                "lat": -34.5850751,
+                "lng": -58.4620711
+              },
+              "html_instructions": "Turn <b>right</b> onto <b>14 de Julio</b>",
+              "maneuver": "turn-right",
+              "polyline": {
+                "points": "bnarEhjycJvEFzEJ"
+              },
+              "start_location": {
+                "lat": -34.5828967,
+                "lng": -58.4619668
+              },
+              "travel_mode": "DRIVING"
+            },
+            {
+              "distance": {
+                "text": "0.1 km",
+                "value": 116
+              },
+              "duration": {
+                "text": "1 min",
+                "value": 30
+              },
+              "end_location": {
+                "lat": -34.5850248,
+                "lng": -58.46333749999999
+              },
+              "html_instructions": "Turn <b>right</b> at the 2nd cross street onto <b>Av Triunvirato</b><div style=\"font-size:0.9em\">Destination will be on the right</div>",
+              "maneuver": "turn-right",
+              "polyline": {
+                "points": "v{arE|jycJCvAAbBAj@AJAH"
+              },
+              "start_location": {
+                "lat": -34.5850751,
+                "lng": -58.4620711
+              },
+              "travel_mode": "DRIVING"
+            }
+          ],
+          "traffic_speed_entry": [],
+          "via_waypoint": []
+        },
+        {
+          "distance": {
+            "text": "4.3 km",
+            "value": 4324
+          },
+          "duration": {
+            "text": "14 mins",
+            "value": 864
+          },
+          "end_address": "Baigorria 3263, C1417 FRK, Buenos Aires, Argentina",
+          "end_location": {
+            "lat": -34.6050994,
+            "lng": -58.4933662
+          },
+          "start_address": "Av Triunvirato 2899, C1427AAB CABA, Argentina",
+          "start_location": {
+            "lat": -34.5850248,
+            "lng": -58.46333749999999
+          },
+          "steps": [
+            {
+              "distance": {
+                "text": "0.1 km",
+                "value": 149
+              },
+              "duration": {
+                "text": "1 min",
+                "value": 33
+              },
+              "end_location": {
+                "lat": -34.5845308,
+                "lng": -58.4648491
+              },
+              "html_instructions": "Head <b>west</b> on <b>Av Triunvirato</b> toward <b>Heredia</b>",
+              "polyline": {
+                "points": "j{arEzrycJ?@AHAFENIZmAlF"
+              },
+              "start_location": {
+                "lat": -34.5850248,
+                "lng": -58.46333749999999
+              },
+              "travel_mode": "DRIVING"
+            },
+            {
+              "distance": {
+                "text": "0.6 km",
+                "value": 617
+              },
+              "duration": {
+                "text": "3 mins",
+                "value": 160
+              },
+              "end_location": {
+                "lat": -34.5887254,
+                "lng": -58.4692361
+              },
+              "html_instructions": "Turn <b>left</b> onto <b>Estomba</b>",
+              "maneuver": "turn-left",
+              "polyline": {
+                "points": "hxarEh|ycJNDTJJHHHfAlAhDxDtC~CTVRTfDdDpDjE"
+              },
+              "start_location": {
+                "lat": -34.5845308,
+                "lng": -58.4648491
+              },
+              "travel_mode": "DRIVING"
+            },
+            {
+              "distance": {
+                "text": "39 m",
+                "value": 39
+              },
+              "duration": {
+                "text": "1 min",
+                "value": 19
+              },
+              "end_location": {
+                "lat": -34.5889747,
+                "lng": -58.4689315
+              },
+              "html_instructions": "Turn <b>left</b> onto <b>Av. del Campo</b>",
+              "maneuver": "turn-left",
+              "polyline": {
+                "points": "prbrEvwzcJ`@i@LS"
+              },
+              "start_location": {
+                "lat": -34.5887254,
+                "lng": -58.4692361
+              },
+              "travel_mode": "DRIVING"
+            },
+            {
+              "distance": {
+                "text": "0.8 km",
+                "value": 750
+              },
+              "duration": {
+                "text": "2 mins",
+                "value": 94
+              },
+              "end_location": {
+                "lat": -34.5955641,
+                "lng": -58.47059049999999
+              },
+              "html_instructions": "Turn <b>right</b> onto <b>Punta Arenas</b>",
+              "maneuver": "turn-right",
+              "polyline": {
+                "points": "`tbrExuzcJrANnCd@ZH^Hr@LTDFFXD\\FFBh@HxATh@Ft@LTDVBFBLBN@x@LNBp@LZFHDV@TA~AXNBzAX~ATPDP@ZD"
+              },
+              "start_location": {
+                "lat": -34.5889747,
+                "lng": -58.4689315
+              },
+              "travel_mode": "DRIVING"
+            },
+            {
+              "distance": {
+                "text": "49 m",
+                "value": 49
+              },
+              "duration": {
+                "text": "1 min",
+                "value": 9
+              },
+              "end_location": {
+                "lat": -34.5957775,
+                "lng": -58.471037
+              },
+              "html_instructions": "Turn <b>right</b> onto <b>Paz Soldán</b>",
+              "maneuver": "turn-right",
+              "polyline": {
+                "points": "f}crEd`{cJd@v@ALFR"
+              },
+              "start_location": {
+                "lat": -34.5955641,
+                "lng": -58.47059049999999
+              },
+              "travel_mode": "DRIVING"
+            },
+            {
+              "distance": {
+                "text": "80 m",
+                "value": 80
+              },
+              "duration": {
+                "text": "1 min",
+                "value": 20
+              },
+              "end_location": {
+                "lat": -34.5964263,
+                "lng": -58.4713024
+              },
+              "html_instructions": "Turn <b>left</b> onto <b>Av. de los Constituyentes</b>",
+              "maneuver": "turn-left",
+              "polyline": {
+                "points": "r~crE~b{cJBLDFFFnBT"
+              },
+              "start_location": {
+                "lat": -34.5957775,
+                "lng": -58.471037
+              },
+              "travel_mode": "DRIVING"
+            },
+            {
+              "distance": {
+                "text": "0.6 km",
+                "value": 609
+              },
+              "duration": {
+                "text": "2 mins",
+                "value": 98
+              },
+              "end_location": {
+                "lat": -34.5970867,
+                "lng": -58.47787449999999
+              },
+              "html_instructions": "Turn <b>right</b> onto <b>Av. Warnes</b>",
+              "maneuver": "turn-right",
+              "polyline": {
+                "points": "tbdrErd{cJd@dEf@dENnAFp@Dl@Bl@BlA?f@DlD@P?F?F@~B@rA@hA@rA"
+              },
+              "start_location": {
+                "lat": -34.5964263,
+                "lng": -58.4713024
+              },
+              "travel_mode": "DRIVING"
+            },
+            {
+              "distance": {
+                "text": "0.3 km",
+                "value": 275
+              },
+              "duration": {
+                "text": "1 min",
+                "value": 52
+              },
+              "end_location": {
+                "lat": -34.5993123,
+                "lng": -58.47900049999999
+              },
+              "html_instructions": "Turn <b>left</b> onto <b>Av. Chorroarín</b>",
+              "maneuver": "turn-left",
+              "polyline": {
+                "points": "xfdrEtm|cJfA`@vCt@TFpA`@PDRJHDLFf@X@@@B@@@B@B?B@D@D?D"
+              },
+              "start_location": {
+                "lat": -34.5970867,
+                "lng": -58.47787449999999
+              },
+              "travel_mode": "DRIVING"
+            },
+            {
+              "distance": {
+                "text": "64 m",
+                "value": 64
+              },
+              "duration": {
+                "text": "1 min",
+                "value": 15
+              },
+              "end_location": {
+                "lat": -34.5990523,
+                "lng": -58.4796273
+              },
+              "html_instructions": "<b>Av. Chorroarín</b> turns <b>right</b> and becomes <b>Av. San Martín</b>",
+              "polyline": {
+                "points": "ttdrEvt|cJ?DCFADCJi@|A"
+              },
+              "start_location": {
+                "lat": -34.5993123,
+                "lng": -58.47900049999999
+              },
+              "travel_mode": "DRIVING"
+            },
+            {
+              "distance": {
+                "text": "0.1 km",
+                "value": 129
+              },
+              "duration": {
+                "text": "1 min",
+                "value": 36
+              },
+              "end_location": {
+                "lat": -34.6000888,
+                "lng": -58.48024769999999
+              },
+              "html_instructions": "Turn <b>left</b> onto <b>Basilio Cittadini</b>",
+              "maneuver": "turn-left",
+              "polyline": {
+                "points": "`sdrEtx|cJ\\NRLhBbAZNHBLD"
+              },
+              "start_location": {
+                "lat": -34.5990523,
+                "lng": -58.4796273
+              },
+              "travel_mode": "DRIVING"
+            },
+            {
+              "distance": {
+                "text": "0.1 km",
+                "value": 112
+              },
+              "duration": {
+                "text": "1 min",
+                "value": 26
+              },
+              "end_location": {
+                "lat": -34.5999362,
+                "lng": -58.4814528
+              },
+              "html_instructions": "Turn <b>right</b> onto <b>Dr. Enzo Bordabehere</b>",
+              "maneuver": "turn-right",
+              "polyline": {
+                "points": "pydrEp||cJ@^?L?LEf@QdBGd@"
+              },
+              "start_location": {
+                "lat": -34.6000888,
+                "lng": -58.48024769999999
+              },
+              "travel_mode": "DRIVING"
+            },
+            {
+              "distance": {
+                "text": "0.1 km",
+                "value": 99
+              },
+              "duration": {
+                "text": "1 min",
+                "value": 23
+              },
+              "end_location": {
+                "lat": -34.6007662,
+                "lng": -58.48183419999999
+              },
+              "html_instructions": "Turn <b>left</b> onto <b>Empedrado</b>",
+              "maneuver": "turn-left",
+              "polyline": {
+                "points": "rxdrE`d}cJhAl@NHZFFBF?FBVB"
+              },
+              "start_location": {
+                "lat": -34.5999362,
+                "lng": -58.4814528
+              },
+              "travel_mode": "DRIVING"
+            },
+            {
+              "distance": {
+                "text": "0.7 km",
+                "value": 652
+              },
+              "duration": {
+                "text": "2 mins",
+                "value": 98
+              },
+              "end_location": {
+                "lat": -34.6011957,
+                "lng": -58.4889343
+              },
+              "html_instructions": "Turn <b>right</b> onto <b>Ricardo Gutiérrez</b>",
+              "maneuver": "turn-right",
+              "polyline": {
+                "points": "x}drElf}cJTnKFhB@L?TLpEBr@DxA@XFbA@PNpG@d@@x@?LA\\"
+              },
+              "start_location": {
+                "lat": -34.6007662,
+                "lng": -58.48183419999999
+              },
+              "travel_mode": "DRIVING"
+            },
+            {
+              "distance": {
+                "text": "0.2 km",
+                "value": 204
+              },
+              "duration": {
+                "text": "1 min",
+                "value": 48
+              },
+              "end_location": {
+                "lat": -34.6022531,
+                "lng": -58.4907486
+              },
+              "html_instructions": "Turn <b>left</b> onto <b>Nogoyá</b>",
+              "maneuver": "turn-left",
+              "polyline": {
+                "points": "n`erExr~cJNZDHv@|AHNHPHNHR^t@l@rALV"
+              },
+              "start_location": {
+                "lat": -34.6011957,
+                "lng": -58.4889343
+              },
+              "travel_mode": "DRIVING"
+            },
+            {
+              "distance": {
+                "text": "0.1 km",
+                "value": 120
+              },
+              "duration": {
+                "text": "1 min",
+                "value": 26
+              },
+              "end_location": {
+                "lat": -34.6031448,
+                "lng": -58.4900095
+              },
+              "html_instructions": "Turn <b>left</b> onto <b>Argerich</b>",
+              "maneuver": "turn-left",
+              "polyline": {
+                "points": "`gerEd~~cJLKVSr@i@r@i@NMRQ"
+              },
+              "start_location": {
+                "lat": -34.6022531,
+                "lng": -58.4907486
+              },
+              "travel_mode": "DRIVING"
+            },
+            {
+              "distance": {
+                "text": "0.4 km",
+                "value": 376
+              },
+              "duration": {
+                "text": "2 mins",
+                "value": 107
+              },
+              "end_location": {
+                "lat": -34.6050994,
+                "lng": -58.4933662
+              },
+              "html_instructions": "Turn <b>right</b> at the 1st cross street onto <b>Baigorria</b>",
+              "maneuver": "turn-right",
+              "polyline": {
+                "points": "rlerEpy~cJ|CjGDJ`C~EP\\JPXn@h@fA"
+              },
+              "start_location": {
+                "lat": -34.6031448,
+                "lng": -58.4900095
+              },
+              "travel_mode": "DRIVING"
+            }
+          ],
+          "traffic_speed_entry": [],
+          "via_waypoint": []
+        }
+      ],
+      "overview_polyline": {
+        "points": "zxerEpn_dJr@vAVf@a@^gC`CyA~@yE`DeD|B{AhAa@RwE`DcMpIeHuMg@}@wFsKkA_CcCyEq@wAYu@_@eA_@qAQy@}@sBm@kAy@}Ae@u@a@m@][QE_BiBY_@kC_FaHuMs@oAgA_BgD}EmDoFkD_FmBkC{HcLyJuNuCaEUa@dA_AJU~@yE`CeKlAyFF[Q@SJIAe@@DsEJgMPwPH{GvEFzEJCvACnCCTIb@wAhGd@PTRpFfGjDvDzDzDpDjE`@i@LSrANjDn@rAVTDFFv@LtDj@rEr@lATHDV@TA~AXjB\\~Cb@d@v@ALJ`@LNnBTd@dEv@tGL~AFzBDtEB`DB|C@rAfA`@lD|@bBf@rAr@FJDR?JELm@hBp@\\dCrAVH@l@Et@YjCxAv@r@NVBTnKHvBVtJH|APbHB~AAj@vArC|@jBz@jBd@_@jCsBvHtOnAhC"
+      },
+      "summary": "Av. Francisco Beiró",
+      "warnings": [],
+      "waypoint_order": [
+        0
+      ]
+    }
+  ],
+  "status": "OK"
+}
