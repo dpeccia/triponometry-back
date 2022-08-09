@@ -2,14 +2,16 @@ package utn.triponometry.domain.external
 
 import net.fortuna.ical4j.data.CalendarOutputter
 import net.fortuna.ical4j.model.Calendar
-import net.fortuna.ical4j.model.Date
 import net.fortuna.ical4j.model.DateTime
 import net.fortuna.ical4j.model.TimeZoneRegistryFactory
 import net.fortuna.ical4j.model.component.VEvent
 import net.fortuna.ical4j.model.property.CalScale
 import net.fortuna.ical4j.model.property.ProdId
 import net.fortuna.ical4j.model.property.Version
+import utn.triponometry.domain.external.dtos.CalendarDto
+import utn.triponometry.domain.external.dtos.DateDto
 import utn.triponometry.domain.external.dtos.EventTrip
+import utn.triponometry.domain.external.dtos.EventsDto
 import java.io.FileOutputStream
 import java.util.*
 
@@ -26,9 +28,25 @@ class CalendarAdapter {
         return calendar
     }
 
-    fun calendarAsString(events : List<EventTrip>): String{
-       return createCalendar(events).toString()
+    fun getCalendarResponse(events : List<EventTrip>): CalendarDto {
+       val eventsDto = events.map { events -> mapEventsToEventsDto(events) }
+       return CalendarDto(createCalendar(events).toString(),eventsDto)
     }
+    fun mapEventsToEventsDto(e: EventTrip): EventsDto {
+
+        //El Calendar es necesario para calcular la hora y minutos finales
+        val cal: java.util.Calendar = GregorianCalendar()
+        cal[java.util.Calendar.HOUR_OF_DAY] = e.startDate.hour
+        cal[java.util.Calendar.MINUTE] = e.startDate.minute+e.duration
+        val dateTime = DateTime(cal.time)
+
+        return EventsDto(
+            e.name,
+            DateDto(e.startDate.year, e.startDate.month, e.startDate.day, e.startDate.hour, e.startDate.minute),
+            DateDto(e.startDate.year, e.startDate.month, e.startDate.day, dateTime.hours, dateTime.minutes)
+        )
+    }
+
 
     fun createIcsFile(calendar: Calendar,fileName: String){
         val fout = FileOutputStream(fileName)
@@ -36,15 +54,14 @@ class CalendarAdapter {
         outputter.output(calendar, fout)
     }
 
-    fun createTimeEvent(e: EventTrip): VEvent {
+    fun createTimeEvent(eventTrip: EventTrip): VEvent {
         val registry = TimeZoneRegistryFactory.getInstance().createRegistry()
         val timezone = registry.getTimeZone("America/Buenos_Aires")
         val tz = timezone.vTimeZone
-
+        val e = eventTrip.startDate
         val start = createDateTime(e.day,e.month,e.year,e.hour, e.minute)
-        val ending = e.hour + e.duration
-        val end = createDateTime(e.day,e.month,e.year,ending, e.minute)
-        val event = VEvent(start, end, e.name)
+        val end = createDateTime(e.day,e.month,e.year,e.hour, e.minute+eventTrip.duration)
+        val event = VEvent(start, end, eventTrip.name)
         event.properties.add(tz.timeZoneId)
         return event
     }
