@@ -1,5 +1,6 @@
 package utn.triponometry.services
 
+import com.google.maps.model.TravelMode
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -40,7 +41,7 @@ class TripServiceTest {
         val places = mutableListOf(hotel)
         places.addAll(activities)
         val bestCompleteRoute = Individual(places)
-        val calculatorInputs = CalculatorInputs(0,0, timePerDay, listOf())
+        val calculatorInputs = CalculatorInputs(0,0, timePerDay, TravelMode.DRIVING, listOf())
 
         val days = tripService.splitCompleteRouteInDays(bestCompleteRoute, calculatorInputs)
 

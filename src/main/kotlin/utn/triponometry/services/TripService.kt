@@ -6,6 +6,7 @@ import utn.triponometry.domain.CalculatorInputs
 import utn.triponometry.domain.Coordinates
 import utn.triponometry.domain.Day
 import utn.triponometry.domain.Place
+import utn.triponometry.domain.PlaceInput
 import utn.triponometry.domain.external.Directions
 import utn.triponometry.domain.external.GoogleApi
 import utn.triponometry.domain.genetic_algorithm.GeneticAlgorithm
@@ -14,17 +15,19 @@ import utn.triponometry.properties.TriponometryProperties
 
 @Service
 class TripService(val triponometryProperties: TriponometryProperties, val googleApi: GoogleApi) {
-    fun getDurationBetween(coordinates: List<Coordinates>, travelMode: TravelMode): List<Place> {
-        return googleApi.getListOfPlaces(coordinates, travelMode)
+    fun calculateOptimalRoute(calculatorInputs: CalculatorInputs): String {
+        val places = getDurationBetween(calculatorInputs.places, calculatorInputs.travelMode)
+        val bestCompleteRoute = calculateCompleteRoute(places)
+        val optimalRouteInDays = splitCompleteRouteInDays(bestCompleteRoute, calculatorInputs)
+        return getMapFileData(optimalRouteInDays, calculatorInputs.travelMode)
     }
 
-    fun calculateOptimalRoute(calculatorInputs: CalculatorInputs): List<Day> {
-        val bestCompleteRoute = calculateCompleteRoute(calculatorInputs)
-        return splitCompleteRouteInDays(bestCompleteRoute, calculatorInputs)
+    fun getDurationBetween(placesInputs: List<PlaceInput>, travelMode: TravelMode): List<Place> {
+        return googleApi.getListOfPlaces(placesInputs, travelMode)
     }
 
-    private fun calculateCompleteRoute(calculatorInputs: CalculatorInputs): Individual {
-        val bestCompleteRoute = GeneticAlgorithm.run(triponometryProperties.geneticAlgorithm, calculatorInputs.places)
+    private fun calculateCompleteRoute(places: List<Place>): Individual {
+        val bestCompleteRoute = GeneticAlgorithm.run(triponometryProperties.geneticAlgorithm, places)
 
         println("Best: (Fitness = ${bestCompleteRoute.fitness}, Time = ${bestCompleteRoute.totalTime}) ${bestCompleteRoute.places.map { it.id }}")
         return bestCompleteRoute

@@ -3,6 +3,7 @@ package utn.triponometry.domain.external
 import org.springframework.stereotype.Component
 import utn.triponometry.domain.Coordinates
 import utn.triponometry.domain.Place
+import utn.triponometry.domain.PlaceInput
 import utn.triponometry.domain.external.dtos.DistanceMatrixResponseDto
 import utn.triponometry.domain.external.dtos.Elements
 
@@ -21,10 +22,10 @@ class DistanceMatrixAdapter {
         return concatString.dropLast(1)
     }
 
-    fun matrixToListOfPlaces(matrix: DistanceMatrixResponseDto,coordinates: List<Coordinates>): List<Place> {
+    fun matrixToListOfPlaces(matrix: DistanceMatrixResponseDto, placesInputs: List<PlaceInput>): List<Place> {
         val places = mutableListOf<Place>()
         matrix.rows.forEachIndexed { i, _ -> places.add(
-            Place(i,matrix.origin_addresses[i],elementsToDistanceMap(i, matrix.rows[i].elements),0,coordinates[i])
+            Place(i,matrix.origin_addresses[i],elementsToDistanceMap(i, matrix.rows[i].elements), placesInputs[i].timeSpent, placesInputs[i].coordinates)
         )}
         return places.toList()
     }
