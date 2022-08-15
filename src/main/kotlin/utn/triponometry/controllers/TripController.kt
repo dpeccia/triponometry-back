@@ -10,10 +10,10 @@ import utn.triponometry.services.TripService
 @RestController
 @RequestMapping("/trip")
 class TripController(private val tripService: TripService) {
-    @PostMapping("/optimal-route", produces = [MediaType.APPLICATION_XML_VALUE])
-    @ApiOperation("Calculates the optimal route for the given calculator inputs")
+    @PostMapping("/optimal-route")
+    @ApiOperation("Calculates the optimal route for the given calculator inputs and returns an ID")
     fun calculateOptimalRoute(@RequestBody calculatorInputs: CalculatorInputs): ResponseEntity<Any> {
-        val optimalRouteAsKml = tripService.calculateOptimalRoute(calculatorInputs)
-        return ResponseEntity.ok(optimalRouteAsKml)
+        val optimalRouteId = tripService.calculateOptimalRoute(calculatorInputs)
+        return ResponseEntity.ok(optimalRouteId)
     }
 }

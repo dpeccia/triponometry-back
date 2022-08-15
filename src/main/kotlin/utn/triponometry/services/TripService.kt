@@ -9,9 +9,12 @@ import utn.triponometry.domain.Place
 import utn.triponometry.domain.PlaceInput
 import utn.triponometry.domain.external.Directions
 import utn.triponometry.domain.external.GoogleApi
+import utn.triponometry.domain.external.Storage
+import utn.triponometry.domain.external.dtos.AgendaRequest
 import utn.triponometry.domain.genetic_algorithm.GeneticAlgorithm
 import utn.triponometry.domain.genetic_algorithm.Individual
 import utn.triponometry.properties.TriponometryProperties
+import java.util.*
 
 @Service
 class TripService(val triponometryProperties: TriponometryProperties, val googleApi: GoogleApi) {
@@ -19,7 +22,10 @@ class TripService(val triponometryProperties: TriponometryProperties, val google
         val places = getDurationBetween(calculatorInputs.places, calculatorInputs.travelMode)
         val bestCompleteRoute = calculateCompleteRoute(places)
         val optimalRouteInDays = splitCompleteRouteInDays(bestCompleteRoute, calculatorInputs)
-        return getMapFileData(optimalRouteInDays, calculatorInputs.travelMode)
+        val xmlMap = getMapFileData(optimalRouteInDays, calculatorInputs.travelMode)
+        val xmlencoded = Base64.getEncoder().encodeToString(xmlMap.toByteArray())
+        val request = AgendaRequest(xmlencoded)
+        return Storage(triponometryProperties).createAgenda(request)
     }
 
     fun getDurationBetween(placesInputs: List<PlaceInput>, travelMode: TravelMode): List<Place> {

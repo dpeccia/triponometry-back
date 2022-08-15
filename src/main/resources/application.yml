@@ -10,6 +10,8 @@ triponometry:
   genetic-algorithm:
     individuals-qty: 1000
     cycles-qty: 100
+  aws:
+    url: https://yji8each99.execute-api.us-east-1.amazonaws.com/dev
 spring:
   mvc:
     pathmatch:

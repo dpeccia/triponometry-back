@@ -70,13 +70,9 @@ class Directions(triponometryProperties: TriponometryProperties, private val goo
     fun createKMLFile(days: List<Day>, travelMode: TravelMode): String {
 
         val kml = makeKMLFile(days, travelMode)
-//        val xmlModule = JacksonXmlModule()
-//        xmlModule.setDefaultUseWrapper(false)
-
         val builder = Jackson2ObjectMapperBuilder()
         val mapper = builder.createXmlMapper(true).build<ObjectMapper>()
         (mapper as XmlMapper).enable(ToXmlGenerator.Feature.WRITE_XML_DECLARATION)
-        mapper.enable(SerializationFeature.INDENT_OUTPUT)
         mapper.registerModule(ParameterNamesModule())
         mapper.setDefaultUseWrapper(false)
 
