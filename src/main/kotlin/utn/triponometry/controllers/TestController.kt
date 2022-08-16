@@ -18,6 +18,7 @@ import utn.triponometry.domain.external.dtos.EventTrip
 import utn.triponometry.services.CalendarService
 import utn.triponometry.services.GeocodeService
 import utn.triponometry.services.TripService
+import java.io.File
 
 @RestController
 @RequestMapping("/test")
