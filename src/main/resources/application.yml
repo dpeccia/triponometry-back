@@ -16,3 +16,8 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: triponometry-db

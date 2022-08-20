@@ -17,6 +17,7 @@ repositories {
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter")
+	implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -26,7 +27,8 @@ dependencies {
 	implementation("io.springfox:springfox-swagger-ui:3.0.0")
 	implementation("com.google.maps:google-maps-services:2.1.0")
 	implementation ("org.mnode.ical4j:ical4j:3.2.3")
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
+    implementation("junit:junit:4.12")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("com.github.tomakehurst:wiremock:2.27.2")
 	testImplementation("com.ninja-squad:springmockk:3.0.1")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.1")
