@@ -1,0 +1,7 @@
+version: '3'
+services:
+  triponometry-backend:
+    build: .
+    container_name: 'triponometry-backend'
+    ports:
+      - 8080:8080
