@@ -3,6 +3,7 @@ package utn.triponometry.services
 import com.google.maps.model.TravelMode
 import org.springframework.stereotype.Service
 import utn.triponometry.domain.CalculatorInputs
+import utn.triponometry.domain.CalculatorOutputs
 import utn.triponometry.domain.Day
 import utn.triponometry.domain.Place
 import utn.triponometry.domain.PlaceInput
@@ -17,12 +18,15 @@ import java.io.File
 
 @Service
 class TripService(val triponometryProperties: TriponometryProperties, val googleApi: GoogleApi) {
-    fun calculateOptimalRoute(calculatorInputs: CalculatorInputs): String {
+    fun calculateOptimalRoute(calculatorInputs: CalculatorInputs): CalculatorOutputs {
         val places = getDurationBetween(calculatorInputs.places, calculatorInputs.travelMode)
         val bestCompleteRoute = calculateCompleteRoute(places)
         val optimalRouteInDays = splitCompleteRouteInDays(bestCompleteRoute, calculatorInputs)
         val xmlMap = getMapFileData(optimalRouteInDays, calculatorInputs.travelMode)
-        return Storage(triponometryProperties).createAgenda(AgendaRequest( xmlMap))
+
+        return CalculatorOutputs(
+            mapId = Storage(triponometryProperties).createAgenda(AgendaRequest(xmlMap))
+        )
     }
 
     fun getDurationBetween(placesInputs: List<PlaceInput>, travelMode: TravelMode): List<Place> {

@@ -1,8 +1,15 @@
 package utn.triponometry.helpers
 
-class OpenWeatherException(message: String) : RuntimeException(message)
-class AmazonException(message: String) : RuntimeException(message)
-class GoogleGeocodeApiException(message: String) : RuntimeException(message)
-class GoogleDistanceMatrixApiException(message: String) : RuntimeException(message)
+open class TriponometryException(message: String): RuntimeException(message) {
+    fun dto() = mapOf("error" to message)
+}
 
-class IllegalUserException(message: String): RuntimeException(message)
+class OpenWeatherException(message: String) : TriponometryException(message)
+
+class AmazonException(message: String) : TriponometryException(message)
+class GoogleGeocodeApiException(message: String) : TriponometryException(message)
+class GoogleDistanceMatrixApiException(message: String) : TriponometryException(message)
+
+class IllegalUserException(message: String): TriponometryException(message)
+class BadLoginException(message: String): TriponometryException(message)
+class TokenException(message: String): TriponometryException(message)

@@ -37,7 +37,7 @@ class TestController(private val tripService: TripService, private val calendarS
     }
 
     @CrossOrigin(origins = ["http://localhost:3000"])
-    @PostMapping("/kmlFile/{travelMode}",produces = [MediaType.APPLICATION_XML_VALUE])
+    @PostMapping("/kmlFile/{travelMode}")
     @ApiOperation("Gets the kml file with the recommended route")
     fun getMap(@PathVariable travelMode: TravelMode, @RequestBody days: List<Day>): ResponseEntity<String> {
         val response = tripService.getMapFileData(days,travelMode)

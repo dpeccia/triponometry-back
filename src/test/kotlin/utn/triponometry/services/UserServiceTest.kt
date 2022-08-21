@@ -32,7 +32,6 @@ class UserServiceTest {
 
         assertNotNull(newUser.id)
         assertEquals("test@gmail.com", newUser.mail)
-        assertNotEquals("1234", newUser.password)
     }
 
     @Test
