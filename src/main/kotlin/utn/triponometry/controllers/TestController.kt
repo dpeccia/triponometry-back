@@ -14,7 +14,8 @@ import org.springframework.web.bind.annotation.RestController
 import utn.triponometry.domain.Coordinates
 import utn.triponometry.domain.Day
 import utn.triponometry.domain.PlaceInput
-import utn.triponometry.domain.external.dtos.EventTrip
+import utn.triponometry.domain.external.dtos.EventDto
+import utn.triponometry.domain.external.dtos.TripServiceRequest
 import utn.triponometry.services.CalendarService
 import utn.triponometry.services.GeocodeService
 import utn.triponometry.services.TripService
@@ -45,7 +46,7 @@ class TestController(private val tripService: TripService, private val calendarS
     }
 
     @PostMapping("/calendar")
-    fun getCalendar(@RequestBody events: List<EventTrip>): ResponseEntity<Any> {
+    fun getCalendar(@RequestBody events: TripServiceRequest): ResponseEntity<Any> {
         val response = calendarService.getCalendarData(events)
         return ResponseEntity.ok(response)
     }

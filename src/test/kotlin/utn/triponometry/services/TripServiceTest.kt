@@ -41,7 +41,7 @@ class TripServiceTest {
         val places = mutableListOf(hotel)
         places.addAll(activities)
         val bestCompleteRoute = Individual(places)
-        val calculatorInputs = CalculatorInputs(0,0, timePerDay, TravelMode.DRIVING, listOf())
+        val calculatorInputs = CalculatorInputs(0,0, timePerDay, TravelMode.DRIVING, listOf(),9,30,60,0,60)
 
         val days = tripService.splitCompleteRouteInDays(bestCompleteRoute, calculatorInputs)
 

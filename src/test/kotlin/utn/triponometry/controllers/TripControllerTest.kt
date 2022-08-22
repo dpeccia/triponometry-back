@@ -19,6 +19,8 @@ import utn.triponometry.domain.CalculatorInputs
 import utn.triponometry.domain.CalculatorOutputs
 import utn.triponometry.domain.Coordinates
 import utn.triponometry.domain.PlaceInput
+import utn.triponometry.domain.external.dtos.EventDto
+import utn.triponometry.domain.external.dtos.TripServiceResponse
 import utn.triponometry.helpers.GoogleDistanceMatrixApiException
 import utn.triponometry.services.TripService
 
@@ -39,7 +41,7 @@ class TripControllerTest {
 
     val placesInputs = listOf(PlaceInput(Coordinates(-34.3, -35.2), 120), PlaceInput(Coordinates(-45.2, -34.4), 120))
 
-    val calculatorInputs = CalculatorInputs(10, 2, 600, TravelMode.DRIVING, placesInputs)
+    val calculatorInputs = CalculatorInputs(10, 2, 600, TravelMode.DRIVING, placesInputs,9,30,60,0,60)
 
     @Test
     fun `optimal-route endpoint needs authorization`() {
@@ -77,7 +79,7 @@ class TripControllerTest {
     @Test
     fun `optimal-route endpoint returns OK`() {
         stubLogin()
-        every { tripService.calculateOptimalRoute(any()) } returns CalculatorOutputs("1234")
+        every { tripService.calculateOptimalRoute(any()) } returns TripServiceResponse("1234", listOf())
 
         val responseAsString = mvc.perform(
             MockMvcRequestBuilders
