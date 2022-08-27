@@ -17,4 +17,10 @@ class TripController(private val tripService: TripService) {
         val optimalRouteId = tripService.calculateOptimalRoute(calculatorInputs)
         return ResponseEntity.ok(optimalRouteId)
     }
+
+    @GetMapping("/kml/{kmlId}")
+    fun getKmlInformation(@PathVariable kmlId: String): ResponseEntity<Any> {
+        val response = tripService.getAgendaFromAws(kmlId)
+        return ResponseEntity.ok(response)
+    }
 }
