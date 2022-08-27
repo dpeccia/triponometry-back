@@ -8,4 +8,5 @@ import java.util.*
 @Repository
 interface UserRepository : MongoRepository<User, String> {
     fun findByMail(mail: String): Optional<User>
+    fun findByMailAndPassword(mail: String, password: String): Optional<User>
 }

@@ -1,13 +1,14 @@
 package utn.triponometry.services
 
+import net.fortuna.ical4j.model.Calendar
 import org.springframework.stereotype.Service
 import utn.triponometry.domain.external.CalendarAdapter
-import utn.triponometry.domain.external.dtos.CalendarDto
-import utn.triponometry.domain.external.dtos.EventTrip
+import utn.triponometry.domain.external.dtos.EventDto
+import utn.triponometry.domain.external.dtos.TripServiceRequest
 
 @Service
 class CalendarService() {
-    fun getCalendarData(events: List<EventTrip>): CalendarDto {
-       return CalendarAdapter().getCalendarResponse(events)
+    fun getCalendarData(events: TripServiceRequest): String {
+       return CalendarAdapter().createCalendar(events.events,events.startDate).toString()
     }
 }

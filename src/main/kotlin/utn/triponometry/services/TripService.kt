@@ -3,26 +3,30 @@ package utn.triponometry.services
 import com.google.maps.model.TravelMode
 import org.springframework.stereotype.Service
 import utn.triponometry.domain.CalculatorInputs
+import utn.triponometry.domain.CalculatorOutputs
 import utn.triponometry.domain.Day
 import utn.triponometry.domain.Place
 import utn.triponometry.domain.PlaceInput
+import utn.triponometry.domain.external.CalendarAdapter
 import utn.triponometry.domain.external.Directions
 import utn.triponometry.domain.external.GoogleApi
 import utn.triponometry.domain.external.Storage
 import utn.triponometry.domain.external.dtos.AgendaRequest
+import utn.triponometry.domain.external.dtos.TripServiceResponse
 import utn.triponometry.domain.genetic_algorithm.GeneticAlgorithm
 import utn.triponometry.domain.genetic_algorithm.Individual
 import utn.triponometry.properties.TriponometryProperties
-import java.io.File
 
 @Service
 class TripService(val triponometryProperties: TriponometryProperties, val googleApi: GoogleApi) {
-    fun calculateOptimalRoute(calculatorInputs: CalculatorInputs): String {
+    fun calculateOptimalRoute(calculatorInputs: CalculatorInputs): TripServiceResponse {
         val places = getDurationBetween(calculatorInputs.places, calculatorInputs.travelMode)
         val bestCompleteRoute = calculateCompleteRoute(places)
         val optimalRouteInDays = splitCompleteRouteInDays(bestCompleteRoute, calculatorInputs)
         val xmlMap = getMapFileData(optimalRouteInDays, calculatorInputs.travelMode)
-        return Storage(triponometryProperties).createAgenda(AgendaRequest( xmlMap))
+        val idOfKml = Storage(triponometryProperties).createAgenda(AgendaRequest( xmlMap))
+        val listOfEvents = CalendarAdapter().getListOfEvents(optimalRouteInDays,calculatorInputs)
+        return TripServiceResponse(idOfKml,listOfEvents)
     }
 
     fun getDurationBetween(placesInputs: List<PlaceInput>, travelMode: TravelMode): List<Place> {

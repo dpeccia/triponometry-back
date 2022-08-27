@@ -1,6 +1,5 @@
 package utn.triponometry.domain.external
 
-import net.fortuna.ical4j.data.CalendarOutputter
 import net.fortuna.ical4j.model.Calendar
 import net.fortuna.ical4j.model.DateTime
 import net.fortuna.ical4j.model.TimeZoneRegistryFactory
@@ -8,65 +7,105 @@ import net.fortuna.ical4j.model.component.VEvent
 import net.fortuna.ical4j.model.property.CalScale
 import net.fortuna.ical4j.model.property.ProdId
 import net.fortuna.ical4j.model.property.Version
-import utn.triponometry.domain.external.dtos.CalendarDto
+import utn.triponometry.domain.CalculatorInputs
+import utn.triponometry.domain.Day
 import utn.triponometry.domain.external.dtos.DateDto
-import utn.triponometry.domain.external.dtos.EventTrip
-import utn.triponometry.domain.external.dtos.EventsDto
-import java.io.FileOutputStream
+import utn.triponometry.domain.external.dtos.EventDto
+import utn.triponometry.domain.external.dtos.EventTime
 import java.util.*
 
-class CalendarAdapter {
 
-    fun createCalendar(events : List<EventTrip>): Calendar {
+class CalendarAdapter() {
 
-        val calendar = Calendar()
-        calendar.properties.add(ProdId("-//Events Calendar//iCal4j 1.0//EN"))
-        calendar.properties.add(Version.VERSION_2_0)
-        calendar.properties.add(CalScale.GREGORIAN)
+    //FUNCTIONS TO CREATE EVENTS:
+    fun getListOfEvents(days: List<Day>, inputs: CalculatorInputs): MutableList<EventDto> {
+        val events = mutableListOf<EventDto>()
+        var cal = GregorianCalendar()
 
-        events.map {events -> createTimeEvent(events)}.forEach { e -> calendar.components.add(e) }
-        return calendar
+        days.forEach{d -> events.addAll(mapDayEventstoEventsDto(d, inputs, cal))}
+
+        repeat(inputs.freeDays){
+            addFreeDay(cal, events,inputs.startHour)
+        }
+        return events
     }
 
-    fun getCalendarResponse(events : List<EventTrip>): CalendarDto {
-       val eventsDto = events.map { events -> mapEventsToEventsDto(events) }
-       return CalendarDto(createCalendar(events).toString(),eventsDto)
+    fun mapDayEventstoEventsDto(day: Day, inputs: CalculatorInputs, cal: GregorianCalendar): MutableList<EventDto> {
+        cal[java.util.Calendar.HOUR_OF_DAY] = inputs.startHour
+        cal[java.util.Calendar.MINUTE] = 0
+
+        val events = mutableListOf<EventDto>()
+        val activities = day.route.drop(1) //Saco el hotel de los eventos
+        val defaultEvents = makeListOfDefaultEvents(inputs)
+
+        for (activity in activities) {
+            addDefaultEvent(cal, events, defaultEvents)
+            events.add(createEventDto(activity.name, cal, GregorianCalendar.MINUTE, activity.timeSpent!!))
+            cal.add(GregorianCalendar.MINUTE, activity.timeSpent)
+        }
+
+        while (defaultEvents.isNotEmpty()) {
+            cal.add(GregorianCalendar.MINUTE, 60)
+            cal[java.util.Calendar.MINUTE] = 0
+            addDefaultEvent(cal, events, defaultEvents)
+        }
+        //Aumento el día para los siguientes eventos
+        cal.add(GregorianCalendar.DAY_OF_MONTH, 1)
+        return events
     }
-    fun mapEventsToEventsDto(e: EventTrip): EventsDto {
 
-        //El Calendar es necesario para calcular la hora y minutos finales
-        val cal: java.util.Calendar = GregorianCalendar()
-        cal[java.util.Calendar.HOUR_OF_DAY] = e.startDate.hour
-        cal[java.util.Calendar.MINUTE] = e.startDate.minute+e.duration
-        val dateTime = DateTime(cal.time)
+    fun addDefaultEvent(cal: GregorianCalendar, events: MutableList<EventDto>, defaultEvents: MutableList<EventTime>) {
+        if (defaultEvents.isNotEmpty()) {
+            var nextEvent = defaultEvents[0]
+            if (nextEvent.isBetween(cal.get(GregorianCalendar.HOUR_OF_DAY))) {
+                events.add(createEventDto(nextEvent.name, cal, GregorianCalendar.MINUTE, nextEvent.duration))
+                defaultEvents.removeFirst()
+                cal.add(GregorianCalendar.MINUTE, nextEvent.duration)
+            }
+        }
+    }
 
-        return EventsDto(
-            e.name,
-            DateDto(e.startDate.year, e.startDate.month, e.startDate.day, e.startDate.hour, e.startDate.minute),
-            DateDto(e.startDate.year, e.startDate.month, e.startDate.day, dateTime.hours, dateTime.minutes)
+    fun addFreeDay(cal: GregorianCalendar, events: MutableList<EventDto>,start: Int) {
+        cal[java.util.Calendar.HOUR_OF_DAY] = start
+        cal[java.util.Calendar.MINUTE] = 0
+        events.add(createEventDto("Día Libre", cal, GregorianCalendar.MINUTE, 12*60))
+        cal.add(GregorianCalendar.DAY_OF_MONTH, 1)
+    }
+
+    fun makeListOfDefaultEvents(inputs: CalculatorInputs): MutableList<EventTime> {
+        var defaultEvents = mutableListOf<EventTime>()
+        if (inputs.breakfast != 0) defaultEvents.add(EventTime("Desayuno", 7, 11, inputs.breakfast))
+        if (inputs.lunch != 0) defaultEvents.add(EventTime("Almuerzo", 11, 16, inputs.lunch))
+        if (inputs.snack != 0) defaultEvents.add(EventTime("Merienda", 16, 19, inputs.snack))
+        if (inputs.dinner != 0) defaultEvents.add(EventTime("Cena", 19, 22, inputs.dinner))
+        return defaultEvents
+    }
+
+    //FUNCTIONS TO ICS:
+    fun createEventDto(name: String, cal: GregorianCalendar, type: Int, duration: Int): EventDto {
+        val cal2 = cal.clone() as GregorianCalendar
+        cal2.add(type, duration)
+        return EventDto(
+            name,
+            mapCalendarToDateDto(cal),
+            mapCalendarToDateDto(cal2)
         )
     }
 
-
-    fun createIcsFile(calendar: Calendar,fileName: String){
-        val fout = FileOutputStream(fileName)
-        val outputter = CalendarOutputter()
-        outputter.output(calendar, fout)
-    }
-
-    fun createTimeEvent(eventTrip: EventTrip): VEvent {
+    fun createTimeEvent(eventTrip: EventDto): VEvent {
         val registry = TimeZoneRegistryFactory.getInstance().createRegistry()
-        val timezone = registry.getTimeZone("America/Buenos_Aires")
+        val timezone = registry.getTimeZone("America/Buenos_Aires") //TODO: deberia chequearse la zona?
         val tz = timezone.vTimeZone
-        val e = eventTrip.startDate
-        val start = createDateTime(e.day,e.month,e.year,e.hour, e.minute)
-        val end = createDateTime(e.day,e.month,e.year,e.hour, e.minute+eventTrip.duration)
+        val startTime = eventTrip.start
+        val endTime = eventTrip.end
+        val start = createDateTime(startTime.day, startTime.month, startTime.year, startTime.hour, startTime.minute)
+        val end = createDateTime(endTime.day, endTime.month, endTime.year, endTime.hour, endTime.minute)
         val event = VEvent(start, end, eventTrip.name)
         event.properties.add(tz.timeZoneId)
         return event
     }
 
-    fun createDateTime(day: Int, month: Int,year: Int,hour: Int, minute: Int): DateTime {
+    fun createDateTime(day: Int, month: Int, year: Int, hour: Int, minute: Int): DateTime {
         val startDate: java.util.Calendar = GregorianCalendar()
         startDate[java.util.Calendar.MONTH] = month
         startDate[java.util.Calendar.DAY_OF_MONTH] = day
@@ -75,6 +114,63 @@ class CalendarAdapter {
         startDate[java.util.Calendar.MINUTE] = minute
         startDate[java.util.Calendar.SECOND] = 0
         return DateTime(startDate.time)
+    }
+
+    fun createCalendar(events: List<EventDto>, startDate: DateDto): Calendar {
+        val calendar = Calendar()
+        calendar.properties.add(ProdId("-//Events Calendar//iCal4j 1.0//EN"))
+        calendar.properties.add(Version.VERSION_2_0)
+        calendar.properties.add(CalScale.GREGORIAN)
+
+        val updatedEvents = mapEvents(events, startDate)
+        updatedEvents.map { events -> createTimeEvent(events) }.forEach { e -> calendar.components.add(e) }
+        return calendar
+    }
+
+    fun mapEvents(events: List<EventDto>, start: DateDto): MutableList<EventDto> {
+
+        val response = mutableListOf<EventDto>()
+        val eventFirstDate = mapDateDtoToCalendar(events[0].start)
+        val beginning = mapDateDtoToCalendar(start)
+        val calc = beginning.timeInMillis - eventFirstDate.timeInMillis
+        val difDays = (calc / (24 * 60 * 60 * 1000)).toInt();
+
+        for (event in events) {
+            val start = mapDateDtoToCalendar(event.start)
+            start.add(GregorianCalendar.DAY_OF_MONTH, difDays)
+            val end = mapDateDtoToCalendar(event.end)
+            end.add(GregorianCalendar.DAY_OF_MONTH, difDays)
+            response.add(
+                EventDto(
+                    event.name,
+                    mapCalendarToDateDto(start),
+                    mapCalendarToDateDto(end),
+                )
+            )
+
+        }
+        return response
+
+    }
+
+    private fun mapCalendarToDateDto(cal: GregorianCalendar): DateDto {
+        return DateDto(
+            cal[java.util.Calendar.YEAR],
+            cal[java.util.Calendar.MONTH],
+            cal[java.util.Calendar.DAY_OF_MONTH],
+            cal[java.util.Calendar.HOUR_OF_DAY],
+            cal[java.util.Calendar.MINUTE],
+        )
+    }
+
+    private fun mapDateDtoToCalendar(date: DateDto): GregorianCalendar {
+        var cal = GregorianCalendar()
+        cal[java.util.Calendar.YEAR] = date.year
+        cal[java.util.Calendar.MONTH] = date.month
+        cal[java.util.Calendar.DAY_OF_MONTH] = date.day
+        cal[java.util.Calendar.HOUR_OF_DAY] = date.hour
+        cal[java.util.Calendar.MINUTE] = date.minute
+        return cal
     }
 
 }
