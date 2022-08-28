@@ -1,0 +1,77 @@
+{
+  "calculatorInputs": {
+    "accomodation": {
+      "latitude": 48.86175723811341,
+      "longitude": 2.3406756352030853,
+      "name": "Hotel Francia",
+      "rate": 1
+    },
+    "activities": [
+      {
+        "description": "Museo Francia",
+        "image": "Museo Francia",
+        "latitude": 48.86175723811341,
+        "longitude": 2.3406756352030853,
+        "name": "Museo Francia",
+        "rate": 0,
+        "wikidata": "Museo Francia",
+        "wikipediaEnglishLink": "Museo Francia",
+        "wikipediaSpanishLink": "Museo Francia"
+      }
+    ],
+    "city": {
+      "country": "Francia",
+      "imageUrl": "www.link.com",
+      "latitude": 48.86175723811341,
+      "longitude":  2.3406756352030853,
+      "name": "Francia",
+      "region": "Francia",
+      "wikiDataId": "123123123123"
+    },
+    "horarios": {
+      "almuerzo": {
+        "number": "min",
+        "time": "30"
+      },
+      "cena": {
+        "number": "min",
+        "time": "30"
+      },
+      "desayuno": {
+        "number": "min",
+        "time": "30"
+      },
+      "despertarse": "9",
+      "dormirse": "9",
+      "libres": "1",
+      "merienda": {
+        "number": "min",
+        "time": "30"
+      }
+    },
+    "mobility": "WALKING"
+  },
+  "calculatorOutputs": {
+    "events": [
+      {
+        "end": {
+          "day": 27,
+          "hour": 12,
+          "minute": 0,
+          "month": 7,
+          "year": 2022
+        },
+        "name": "Actividad 1",
+        "start": {
+          "day": 27,
+          "hour": 11,
+          "minute": 0,
+          "month": 7,
+          "year": 2022
+        }
+      }
+    ],
+    "mapId": "ID"
+  },
+  "name":"Francia"
+}

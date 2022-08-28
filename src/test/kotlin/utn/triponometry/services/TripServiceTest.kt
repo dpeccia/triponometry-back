@@ -1,19 +1,25 @@
 package utn.triponometry.services
 
+import com.google.gson.Gson
 import com.google.maps.model.TravelMode
-import org.junit.jupiter.api.Assertions.assertEquals
+import io.mockk.every
+import io.mockk.mockk
+import org.bson.types.ObjectId
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import utn.triponometry.domain.CalculatorInputs
-import utn.triponometry.domain.Day
-import utn.triponometry.domain.Place
+import org.junit.jupiter.api.assertThrows
+import utn.triponometry.domain.*
+import utn.triponometry.domain.dtos.NewTripRequest
+import utn.triponometry.domain.external.GoogleApi
 import utn.triponometry.domain.genetic_algorithm.Individual
+import utn.triponometry.helpers.IllegalTripException
+import utn.triponometry.properties.TriponometryProperties
+import utn.triponometry.repos.TripRepository
+import utn.triponometry.repos.UserRepository
+import java.io.File
+import java.util.*
 
-@SpringBootTest
 class TripServiceTest {
-    @Autowired
-    lateinit var tripService: TripService
 
     private val hotel = Place(0, "Hotel", mapOf(1 to 24, 2 to 31, 3 to 33, 4 to 25, 5 to 27, 6 to 11))
     private val activity1 = Place(1, "Activity 1", mapOf(0 to 26, 2 to 24, 3 to 25, 4 to 29, 5 to 33, 6 to 16), 120)
@@ -25,6 +31,13 @@ class TripServiceTest {
 
     private val activities = listOf(activity6, activity3, activity1, activity2, activity5, activity4)
     private val timePerDay = 660 // minutes (11 hours)
+
+    val tripRepository: TripRepository = mockk()
+    val userRepository: UserRepository = mockk()
+
+    var tripService = TripService(
+        TriponometryProperties(),tripRepository,userRepository, GoogleApi(TriponometryProperties())
+    )
 
     @Test
     fun `creating route for a day`() {
@@ -61,5 +74,76 @@ class TripServiceTest {
          */
 
         assertEquals(expectedDays, days)
+    }
+
+    @Test
+    fun `trip is created successfully`() {
+        val file = File("src/test/resources/request_new_trip.json")
+        val fileContent = file.readText()
+        val request = Gson().fromJson(fileContent, NewTripRequest::class.java)
+        val user = User("mail@gmail.com","password")
+
+        every { tripRepository.findByUserAndName(any(),any()) } returns Optional.empty()
+        every { userRepository.findById(ObjectId("666f6f2d6261722d71757578")) } returns Optional.of(user)
+        every { tripRepository.save(any()) } answers { firstArg() }
+
+        val newTrip = tripService.createNewTrip(request, ObjectId("666f6f2d6261722d71757578"))
+        assertNotNull(newTrip.id)
+        assertEquals("Francia",newTrip.name)
+    }
+
+    @Test
+    fun `trip is not created if it already exists`() {
+        val file = File("src/test/resources/request_new_trip.json")
+        val fileContent = file.readText()
+        val request = Gson().fromJson(fileContent, NewTripRequest::class.java)
+        val user = User("mail@gmail.com","password")
+        val trip = Trip("Francia",request.calculatorInputs,request.calculatorOutputs,user,TripStatus.ACTIVE)
+
+        every { tripRepository.findByUserAndName(any(),any()) } returns Optional.of(trip)
+        every { userRepository.findById(ObjectId("666f6f2d6261722d71757578")) } returns Optional.of(user)
+        every { tripRepository.save(any()) } answers { firstArg() }
+
+
+        val exception = assertThrows<IllegalTripException> { tripService.createNewTrip(request, ObjectId("666f6f2d6261722d71757578")) }
+        assertEquals("There is already a trip under that name", exception.message)
+    }
+
+
+    @Test
+    fun `trip is updated successfully`() {
+        val file = File("src/test/resources/request_new_trip.json")
+        val fileContent = file.readText()
+        val request = Gson().fromJson(fileContent, NewTripRequest::class.java)
+        val user = User("mail@gmail.com","password")
+        val trip = Trip("Francia",request.calculatorInputs,request.calculatorOutputs,user,TripStatus.ACTIVE)
+
+        every { tripRepository.findByUserAndId(any(),any()) } returns Optional.of(trip)
+        every { userRepository.findById(ObjectId("666f6f2d6261722d71757578")) } returns Optional.of(user)
+        every { tripRepository.save(any()) } answers { firstArg() }
+
+        val newTrip = tripService.updateTripStatus(ObjectId("666f6f2d6261722d71757578"),ObjectId("666f6f2d6261722d71757578"),TripStatus.DRAFT)
+        assertNotNull(newTrip.id)
+        assertEquals("Francia",newTrip.name)
+        assertTrue(newTrip.isStatus(TripStatus.DRAFT))
+    }
+
+
+    @Test
+    fun `trip is not updated if it doesn't exist`() {
+        val file = File("src/test/resources/request_new_trip.json")
+        val fileContent = file.readText()
+        val request = Gson().fromJson(fileContent, NewTripRequest::class.java)
+        val user = User("mail@gmail.com","password")
+        val trip = Trip("Francia",request.calculatorInputs,request.calculatorOutputs,user,TripStatus.ACTIVE)
+
+        every { tripRepository.findByUserAndId(any(),any()) } returns Optional.empty()
+        every { userRepository.findById(ObjectId("666f6f2d6261722d71757578")) } returns Optional.of(user)
+        every { tripRepository.save(any()) } answers { firstArg() }
+
+        val exception = assertThrows<IllegalTripException> {
+            tripService.updateTripStatus(ObjectId("666f6f2d6261722d71757578"),ObjectId("666f6f2d6261722d71757578"),TripStatus.DRAFT)
+        }
+        assertEquals("A trip under that name does not exist", exception.message)
     }
 }
