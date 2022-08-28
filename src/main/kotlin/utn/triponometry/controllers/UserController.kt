@@ -1,8 +1,10 @@
 package utn.triponometry.controllers
 
 import io.swagger.annotations.ApiOperation
+import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -27,7 +29,10 @@ class UserController(private val userService: UserService): BaseController() {
     fun login(@RequestBody userDto: UserDto): ResponseEntity<Any> {
         val user = userService.checkUserCredentials(userDto)
         val authCookie = userService.login(user)
-        return ResponseEntity.ok().header("Set-Cookie", authCookie.toString()).body(user)
+        return ResponseEntity.ok()
+            .header("Set-Cookie", authCookie.toString())
+            .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "Set-Cookie")
+            .body(user)
     }
 
     @DeleteMapping("/tokens")

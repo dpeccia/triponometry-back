@@ -1,24 +1,33 @@
 package utn.triponometry.services
 
 import com.google.maps.model.TravelMode
+import org.bson.types.ObjectId
 import org.springframework.stereotype.Service
-import utn.triponometry.domain.CalculatorInputs
-import utn.triponometry.domain.CalculatorOutputs
-import utn.triponometry.domain.Day
-import utn.triponometry.domain.Place
-import utn.triponometry.domain.PlaceInput
+import utn.triponometry.domain.*
+import utn.triponometry.domain.dtos.NewTripRequest
+import utn.triponometry.domain.dtos.TripsResponse
 import utn.triponometry.domain.external.CalendarAdapter
 import utn.triponometry.domain.external.Directions
 import utn.triponometry.domain.external.GoogleApi
 import utn.triponometry.domain.external.Storage
 import utn.triponometry.domain.external.dtos.AgendaRequest
+import utn.triponometry.domain.external.dtos.TripDto
 import utn.triponometry.domain.external.dtos.TripServiceResponse
 import utn.triponometry.domain.genetic_algorithm.GeneticAlgorithm
 import utn.triponometry.domain.genetic_algorithm.Individual
+import utn.triponometry.helpers.IllegalTripException
+import utn.triponometry.helpers.IllegalUserException
 import utn.triponometry.properties.TriponometryProperties
+import utn.triponometry.repos.TripRepository
+import utn.triponometry.repos.UserRepository
 
 @Service
-class TripService(val triponometryProperties: TriponometryProperties, val googleApi: GoogleApi) {
+class TripService(
+    val triponometryProperties: TriponometryProperties,
+    val tripRepository: TripRepository,
+    val userRepository: UserRepository,
+    val googleApi: GoogleApi
+) {
     fun calculateOptimalRoute(calculatorInputs: CalculatorInputs): TripServiceResponse {
         val places = getDurationBetween(calculatorInputs.places, calculatorInputs.travelMode)
         val bestCompleteRoute = calculateCompleteRoute(places)
@@ -83,5 +92,43 @@ class TripService(val triponometryProperties: TriponometryProperties, val google
     }
     fun getMapFileData(locations: List<Day>, travelMode: TravelMode): String =
         Directions(triponometryProperties, googleApi).createKMLFile(locations, travelMode)
+
+    fun createNewTrip(newTripRequest: NewTripRequest, userId: ObjectId): TripDto {
+        val user = userRepository.findById(userId).get()
+        if(tripRepository.findByUserAndName(user,newTripRequest.name).isPresent){
+            throw IllegalTripException("There is already a trip under that name")
+        }
+        val trip = Trip(newTripRequest.name ,newTripRequest.calculatorInputs, newTripRequest.calculatorOutputs, user,TripStatus.ACTIVE)
+        return tripRepository.save(trip).dto()
+    }
+
+    fun getAllTrips(): List<TripDto> {
+        return tripRepository.findAll().map{ trip -> trip.dto()}
+    }
+
+    fun getTrips(userId: ObjectId): TripsResponse {
+        val user = userRepository.findById(userId).get()
+        val trips = tripRepository.findByUser(user)
+
+        val active = trips.filter { t -> t.isStatus(TripStatus.ACTIVE) }.map { t -> t.dto() }
+        val archived = trips.filter { t -> t.isStatus(TripStatus.ARCHIVED) }.map { t -> t.dto() }
+        val draft = trips.filter { t -> t.isStatus(TripStatus.DRAFT) }.map { t -> t.dto() }
+        return TripsResponse(active,archived,draft)
+    }
+
+    fun updateTripStatus(userId: ObjectId, id: ObjectId, newStatus: TripStatus): TripDto {
+        val user = userRepository.findById(userId).get()
+        val tripOptional = tripRepository.findByUserAndId(user,id)
+
+        if(tripOptional.isPresent){
+            val trip = tripOptional.get()
+            trip.status = newStatus
+            return  tripRepository.save(trip).dto()
+        }
+            throw IllegalTripException("A trip under that name does not exist")
+    }
+
+
+
 
 }

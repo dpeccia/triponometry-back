@@ -13,3 +13,4 @@ class GoogleDistanceMatrixApiException(message: String) : TriponometryException(
 class IllegalUserException(message: String): TriponometryException(message)
 class BadLoginException(message: String): TriponometryException(message)
 class TokenException(message: String): TriponometryException(message)
+class IllegalTripException(message: String): TriponometryException(message)
