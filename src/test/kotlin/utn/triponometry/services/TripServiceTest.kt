@@ -98,7 +98,7 @@ class TripServiceTest {
         val fileContent = file.readText()
         val request = Gson().fromJson(fileContent, NewTripRequest::class.java)
         val user = User("mail@gmail.com","password")
-        val trip = Trip("Francia",request.calculatorInputs,request.calculatorOutputs,user,TripStatus.ACTIVE)
+        val trip = Trip("Francia",request.calculatorInputs,user,TripStatus.ACTIVE,request.calculatorOutputs)
 
         every { tripRepository.findByUserAndName(any(),any()) } returns Optional.of(trip)
         every { userRepository.findById(ObjectId("666f6f2d6261722d71757578")) } returns Optional.of(user)
@@ -116,7 +116,7 @@ class TripServiceTest {
         val fileContent = file.readText()
         val request = Gson().fromJson(fileContent, NewTripRequest::class.java)
         val user = User("mail@gmail.com","password")
-        val trip = Trip("Francia",request.calculatorInputs,request.calculatorOutputs,user,TripStatus.ACTIVE)
+        val trip = Trip("Francia",request.calculatorInputs,user,TripStatus.ACTIVE,request.calculatorOutputs)
 
         every { tripRepository.findByUserAndId(any(),any()) } returns Optional.of(trip)
         every { userRepository.findById(ObjectId("666f6f2d6261722d71757578")) } returns Optional.of(user)
@@ -135,7 +135,7 @@ class TripServiceTest {
         val fileContent = file.readText()
         val request = Gson().fromJson(fileContent, NewTripRequest::class.java)
         val user = User("mail@gmail.com","password")
-        val trip = Trip("Francia",request.calculatorInputs,request.calculatorOutputs,user,TripStatus.ACTIVE)
+        val trip = Trip("Francia",request.calculatorInputs,user,TripStatus.ACTIVE,request.calculatorOutputs)
 
         every { tripRepository.findByUserAndId(any(),any()) } returns Optional.empty()
         every { userRepository.findById(ObjectId("666f6f2d6261722d71757578")) } returns Optional.of(user)
@@ -146,4 +146,42 @@ class TripServiceTest {
         }
         assertEquals("A trip under that name does not exist", exception.message)
     }
+
+    @Test
+    fun `trip is completed if status is ACTIVE or ARCHIVED`() {
+        val file = File("src/test/resources/request_new_trip.json")
+        val fileContent = file.readText()
+        val request = Gson().fromJson(fileContent, NewTripRequest::class.java)
+        val user = User("mail@gmail.com","password")
+        val trip = Trip("Francia",request.calculatorInputs,user,TripStatus.ACTIVE,request.calculatorOutputs)
+
+        assertTrue(trip.isComplete())
+
+        trip.status = TripStatus.ARCHIVED
+        assertTrue(trip.isComplete())
+
+        trip.status = TripStatus.DRAFT
+        assertFalse(trip.isComplete())
+    }
+
+    @Test
+    fun `trip is created as draft if it doesn't contain calculator outputs`() {
+        val file = File("src/test/resources/request_new_trip.json")
+        val fileContent = file.readText()
+        val request = Gson().fromJson(fileContent, NewTripRequest::class.java)
+        val user = User("mail@gmail.com","password")
+
+        every { tripRepository.findByUserAndName(any(),any()) } returns Optional.empty()
+        every { userRepository.findById(ObjectId("666f6f2d6261722d71757578")) } returns Optional.of(user)
+        every { tripRepository.save(any()) } answers { firstArg() }
+
+        val newTrip = tripService.createNewDraft(request, ObjectId("666f6f2d6261722d71757578"))
+        assertNotNull(newTrip.id)
+        assertEquals("Francia",newTrip.name)
+        assertEquals(TripStatus.DRAFT,newTrip.status)
+
+    }
+
+
+
 }

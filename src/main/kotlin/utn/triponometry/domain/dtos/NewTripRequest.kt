@@ -1,12 +1,11 @@
 package utn.triponometry.domain.dtos
 
-import utn.triponometry.domain.TripStatus
 import utn.triponometry.domain.external.dtos.EventDto
 
 data class NewTripRequest (
     val name: String,
     val calculatorInputs: CalculatorInputsDto,
-    val calculatorOutputs: CalculatorOutputsDto,
+    val calculatorOutputs: CalculatorOutputsDto? = null,
 )
 
 data class CalculatorInputsDto(

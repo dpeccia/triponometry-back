@@ -16,7 +16,6 @@ import utn.triponometry.domain.external.dtos.TripServiceResponse
 import utn.triponometry.domain.genetic_algorithm.GeneticAlgorithm
 import utn.triponometry.domain.genetic_algorithm.Individual
 import utn.triponometry.helpers.IllegalTripException
-import utn.triponometry.helpers.IllegalUserException
 import utn.triponometry.properties.TriponometryProperties
 import utn.triponometry.repos.TripRepository
 import utn.triponometry.repos.UserRepository
@@ -98,12 +97,21 @@ class TripService(
         if(tripRepository.findByUserAndName(user,newTripRequest.name).isPresent){
             throw IllegalTripException("There is already a trip under that name")
         }
-        val trip = Trip(newTripRequest.name ,newTripRequest.calculatorInputs, newTripRequest.calculatorOutputs, user,TripStatus.ACTIVE)
+        val trip = Trip(newTripRequest.name ,newTripRequest.calculatorInputs, user,TripStatus.ACTIVE, newTripRequest.calculatorOutputs)
+        return tripRepository.save(trip).dto()
+    }
+
+    fun createNewDraft(newTripRequest: NewTripRequest, userId: ObjectId): TripDto {
+        val user = userRepository.findById(userId).get()
+        if(tripRepository.findByUserAndName(user,newTripRequest.name).isPresent){
+            throw IllegalTripException("There is already a trip under that name")
+        }
+        val trip = Trip(newTripRequest.name ,newTripRequest.calculatorInputs, user,TripStatus.DRAFT)
         return tripRepository.save(trip).dto()
     }
 
     fun getAllTrips(): List<TripDto> {
-        return tripRepository.findAll().map{ trip -> trip.dto()}
+        return tripRepository.findAll().filter { t -> t.isComplete() }.map{ trip -> trip.dto()}
     }
 
     fun getTrips(userId: ObjectId): TripsResponse {
@@ -125,10 +133,18 @@ class TripService(
             trip.status = newStatus
             return  tripRepository.save(trip).dto()
         }
-            throw IllegalTripException("A trip under that name does not exist")
+            throw IllegalTripException("A trip under that id does not exist")
     }
 
+    fun getTrip(userId: ObjectId, tripId: ObjectId): TripDto {
+        val user = userRepository.findById(userId).get()
+        val tripOptional = tripRepository.findByUserAndId(user,tripId)
 
-
+        if(tripOptional.isPresent){
+            val trip = tripOptional.get()
+            return  trip.dto()
+        }
+        throw IllegalTripException("A trip under that id does not exist")
+    }
 
 }

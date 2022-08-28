@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*
 import utn.triponometry.domain.CalculatorInputs
 import utn.triponometry.domain.TripStatus
 import utn.triponometry.domain.dtos.NewTripRequest
+import utn.triponometry.domain.external.dtos.TripDto
 import utn.triponometry.services.TripService
 import javax.servlet.http.HttpServletRequest
 
@@ -25,8 +26,13 @@ class TripController(private val tripService: TripService): BaseController() {
     @PostMapping
     @ApiOperation("Creates a new trip")
     fun createNewTrip(@RequestBody newTripRequest: NewTripRequest, request: HttpServletRequest): ResponseEntity<Any> {
-        val userId = checkAndGetUserId(request)
-        val response = tripService.createNewTrip(newTripRequest, userId)
+       val userId = checkAndGetUserId(request)
+       val response: TripDto
+       if (newTripRequest.calculatorOutputs == null) {
+           response = tripService.createNewDraft(newTripRequest, userId)
+       }else{
+           response = tripService.createNewTrip(newTripRequest, userId)
+       }
         return ResponseEntity.ok(response)
     }
 
@@ -44,7 +50,6 @@ class TripController(private val tripService: TripService): BaseController() {
         val userId = checkAndGetUserId(request)
         val response = tripService.getTrips(userId)
         return ResponseEntity.ok(response)
-
     }
 
     @PutMapping
@@ -59,6 +64,15 @@ class TripController(private val tripService: TripService): BaseController() {
     @GetMapping("/kml/{kmlId}")
     fun getKmlInformation(@PathVariable kmlId: String): ResponseEntity<Any> {
         val response = tripService.getAgendaFromAws(kmlId)
+        return ResponseEntity.ok(response)
+    }
+
+    @GetMapping("/info")
+    @ApiOperation("Returns a specific trip")
+    fun getATrip(request: HttpServletRequest,tripId: String): ResponseEntity<Any> {
+        val userId = checkAndGetUserId(request)
+        val tripObjectId = ObjectId(tripId)
+        val response = tripService.getTrip(userId,tripObjectId)
         return ResponseEntity.ok(response)
     }
 }

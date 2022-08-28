@@ -1,7 +1,5 @@
 package utn.triponometry.domain.external.dtos
 
-import org.springframework.data.mongodb.core.index.Indexed
-import org.springframework.data.mongodb.core.mapping.DBRef
 import utn.triponometry.domain.TripStatus
 import utn.triponometry.domain.User
 import utn.triponometry.domain.dtos.CalculatorInputsDto
@@ -39,7 +37,7 @@ data class TripDto(
     val id: String,
     val name: String,
     val calculatorInputs: CalculatorInputsDto,
-    val calculatorOutputs: CalculatorOutputsDto,
     val user: User,
-    var status: TripStatus
+    var status: TripStatus,
+    val calculatorOutputs: CalculatorOutputsDto? = null
 )
