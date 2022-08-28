@@ -100,8 +100,8 @@ class TripService(
         return tripRepository.save(trip).dto()
     }
 
-    fun getAllTrips(): List<Trip> {
-        return tripRepository.findAll()
+    fun getAllTrips(): List<TripDto> {
+        return tripRepository.findAll().map{ trip -> trip.dto()}
     }
 
     fun getTrips(userId: ObjectId): TripsResponse {
@@ -114,14 +114,14 @@ class TripService(
         return TripsResponse(active,archived,draft)
     }
 
-    fun updateTripStatus(userId: ObjectId, id: ObjectId, newStatus: TripStatus): Trip {
+    fun updateTripStatus(userId: ObjectId, id: ObjectId, newStatus: TripStatus): TripDto {
         val user = userRepository.findById(userId).get()
         val tripOptional = tripRepository.findByUserAndId(user,id)
 
         if(tripOptional.isPresent){
             val trip = tripOptional.get()
             trip.status = newStatus
-            return  tripRepository.save(trip)
+            return  tripRepository.save(trip).dto()
         }
             throw IllegalTripException("A trip under that name does not exist")
     }

@@ -125,7 +125,7 @@ class TripServiceTest {
         val newTrip = tripService.updateTripStatus(ObjectId("666f6f2d6261722d71757578"),ObjectId("666f6f2d6261722d71757578"),TripStatus.DRAFT)
         assertNotNull(newTrip.id)
         assertEquals("Francia",newTrip.name)
-        assertTrue(newTrip.isStatus(TripStatus.DRAFT))
+        assertEquals(newTrip.status,TripStatus.DRAFT)
     }
 
 
