@@ -55,4 +55,10 @@ class TripController(private val tripService: TripService): BaseController() {
         val response = tripService.updateTripStatus(userId,tripId,newStatus)
         return ResponseEntity.ok(response)
     }
+
+    @GetMapping("/kml/{kmlId}")
+    fun getKmlInformation(@PathVariable kmlId: String): ResponseEntity<Any> {
+        val response = tripService.getAgendaFromAws(kmlId)
+        return ResponseEntity.ok(response)
+    }
 }

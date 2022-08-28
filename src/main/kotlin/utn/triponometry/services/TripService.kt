@@ -87,7 +87,9 @@ class TripService(
         activitiesNotInRoutes.removeAll(activitiesAlreadyInRoute)
     }
 
-
+    fun getAgendaFromAws(id: String): String {
+        return Storage(triponometryProperties).getAgendaFromAws(id)
+    }
     fun getMapFileData(locations: List<Day>, travelMode: TravelMode): String =
         Directions(triponometryProperties, googleApi).createKMLFile(locations, travelMode)
 

@@ -33,4 +33,17 @@ class Storage(triponometryProperties: TriponometryProperties) {
             .bodyToMono(String::class.java)
             .block()
     }
+
+    fun getAgendaFromAws(id: String): String {
+        val xml = WebClient.create(baseUrl).get()
+            .uri("/s3/${id}")
+            .retrieve()
+            .onStatus(HttpStatus::isError) {
+                val statusCode = it.statusCode()
+                throw AmazonException("${statusCode.value()} - ${statusCode.reasonPhrase}")
+            }
+            .bodyToMono(String::class.java)
+            .block()
+        return xml!!
+    }
 }
