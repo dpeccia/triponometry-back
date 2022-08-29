@@ -6,6 +6,7 @@ import utn.triponometry.domain.dtos.CalculatorInputsDto
 import utn.triponometry.domain.dtos.CalculatorOutputsDto
 
 data class TripServiceResponse(
+    val daysAmount: Int,
     val kml: String,
     val events: List<EventDto>
 )

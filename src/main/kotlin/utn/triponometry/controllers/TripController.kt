@@ -19,8 +19,8 @@ class TripController(private val tripService: TripService): BaseController() {
     @ApiOperation("Calculates the optimal route for the given calculator inputs and returns an ID")
     fun calculateOptimalRoute(@RequestBody calculatorInputs: CalculatorInputs, request: HttpServletRequest): ResponseEntity<Any> {
         checkAndGetUserId(request)
-        val optimalRouteId = tripService.calculateOptimalRoute(calculatorInputs)
-        return ResponseEntity.ok(optimalRouteId)
+        val response = tripService.calculateOptimalRoute(calculatorInputs)
+        return ResponseEntity.ok(response)
     }
 
     @PostMapping

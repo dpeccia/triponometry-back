@@ -1,6 +1,6 @@
 package utn.triponometry.domain.external.dtos
 
-data class DistanceMatrixResponseDto  (
+data class DistanceMatrixResponseDto (
     val destination_addresses: List<String>,
     val origin_addresses: List<String>,
     val rows: List<DistanceRow>,

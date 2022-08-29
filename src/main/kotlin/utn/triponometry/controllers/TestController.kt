@@ -33,7 +33,7 @@ class TestController(private val tripService: TripService, private val calendarS
     @PostMapping("/durations/{travelMode}")
     @ApiOperation("Gets the duration between each coordinate")
     fun getDurationsBetweenCoordinates(@PathVariable travelMode: TravelMode, @RequestBody coordinates: List<Coordinates>): ResponseEntity<Any> {
-        val places = tripService.getDurationBetween(coordinates.map { PlaceInput(it, 0) }, travelMode)
+        val places = tripService.getDurationBetween(coordinates.map { PlaceInput("Activity", it, 0) }, travelMode)
         return ResponseEntity.ok(places)
     }
 

@@ -12,6 +12,8 @@ import utn.triponometry.domain.Day
 import utn.triponometry.domain.external.dtos.DateDto
 import utn.triponometry.domain.external.dtos.EventDto
 import utn.triponometry.domain.external.dtos.EventTime
+import java.time.Duration
+import java.time.LocalTime
 import java.util.*
 
 
@@ -24,15 +26,17 @@ class CalendarAdapter() {
 
         days.forEach{d -> events.addAll(mapDayEventstoEventsDto(d, inputs, cal))}
 
-        repeat(inputs.freeDays){
-            addFreeDay(cal, events,inputs.startHour)
+        val timeInputs = inputs.time
+        repeat(timeInputs.freeDays){
+            addFreeDay(cal, events, timeInputs.startTime, timeInputs.finishTime)
         }
         return events
     }
 
     fun mapDayEventstoEventsDto(day: Day, inputs: CalculatorInputs, cal: GregorianCalendar): MutableList<EventDto> {
-        cal[java.util.Calendar.HOUR_OF_DAY] = inputs.startHour
-        cal[java.util.Calendar.MINUTE] = 0
+        val timeInputs = inputs.time
+        cal[java.util.Calendar.HOUR_OF_DAY] = timeInputs.startTime.hour
+        cal[java.util.Calendar.MINUTE] = timeInputs.startTime.minute
 
         val events = mutableListOf<EventDto>()
         val activities = day.route.drop(1) //Saco el hotel de los eventos
@@ -65,19 +69,20 @@ class CalendarAdapter() {
         }
     }
 
-    fun addFreeDay(cal: GregorianCalendar, events: MutableList<EventDto>,start: Int) {
-        cal[java.util.Calendar.HOUR_OF_DAY] = start
-        cal[java.util.Calendar.MINUTE] = 0
-        events.add(createEventDto("Día Libre", cal, GregorianCalendar.MINUTE, 12*60))
+    fun addFreeDay(cal: GregorianCalendar, events: MutableList<EventDto>, start: LocalTime, finish: LocalTime) {
+        cal[java.util.Calendar.HOUR_OF_DAY] = start.hour
+        cal[java.util.Calendar.MINUTE] = start.minute
+        events.add(createEventDto("Día Libre", cal, GregorianCalendar.MINUTE, Duration.between(start, finish).toMinutes().toInt()))
         cal.add(GregorianCalendar.DAY_OF_MONTH, 1)
     }
 
     fun makeListOfDefaultEvents(inputs: CalculatorInputs): MutableList<EventTime> {
+        val timeInputs = inputs.time
         var defaultEvents = mutableListOf<EventTime>()
-        if (inputs.breakfast != 0) defaultEvents.add(EventTime("Desayuno", 7, 11, inputs.breakfast))
-        if (inputs.lunch != 0) defaultEvents.add(EventTime("Almuerzo", 11, 16, inputs.lunch))
-        if (inputs.snack != 0) defaultEvents.add(EventTime("Merienda", 16, 19, inputs.snack))
-        if (inputs.dinner != 0) defaultEvents.add(EventTime("Cena", 19, 22, inputs.dinner))
+        if (timeInputs.breakfast != 0) defaultEvents.add(EventTime("Desayuno", 7, 11, timeInputs.breakfast))
+        if (timeInputs.lunch != 0) defaultEvents.add(EventTime("Almuerzo", 11, 16, timeInputs.lunch))
+        if (timeInputs.snack != 0) defaultEvents.add(EventTime("Merienda", 16, 19, timeInputs.snack))
+        if (timeInputs.dinner != 0) defaultEvents.add(EventTime("Cena", 19, 22, timeInputs.dinner))
         return defaultEvents
     }
 

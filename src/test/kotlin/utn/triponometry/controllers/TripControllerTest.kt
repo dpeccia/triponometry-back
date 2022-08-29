@@ -19,6 +19,7 @@ import utn.triponometry.domain.CalculatorInputs
 import utn.triponometry.domain.CalculatorOutputs
 import utn.triponometry.domain.Coordinates
 import utn.triponometry.domain.PlaceInput
+import utn.triponometry.domain.TimeInput
 import utn.triponometry.domain.external.dtos.EventDto
 import utn.triponometry.domain.external.dtos.TripServiceResponse
 import utn.triponometry.helpers.GoogleDistanceMatrixApiException
@@ -39,9 +40,16 @@ class TripControllerTest {
     @Autowired
     lateinit var objectMapper: ObjectMapper
 
-    val placesInputs = listOf(PlaceInput(Coordinates(-34.3, -35.2), 120), PlaceInput(Coordinates(-45.2, -34.4), 120))
+    val placesInputs = listOf(
+        PlaceInput("Hotel", Coordinates(-34.3, -35.2), 120),
+        PlaceInput("Activity 1", Coordinates(-45.2, -34.4), 120)
+    )
 
-    val calculatorInputs = CalculatorInputs(10, 2, 600, TravelMode.DRIVING, placesInputs,9,30,60,0,60)
+    val timeInput = TimeInput(
+        "07:00", "23:30", 60, 60, 30, 30, 3
+    )
+
+    val calculatorInputs = CalculatorInputs(TravelMode.DRIVING, placesInputs, timeInput)
 
     @Test
     fun `optimal-route endpoint needs authorization`() {
@@ -79,7 +87,7 @@ class TripControllerTest {
     @Test
     fun `optimal-route endpoint returns OK`() {
         stubLogin()
-        every { tripService.calculateOptimalRoute(any()) } returns TripServiceResponse("1234", listOf())
+        every { tripService.calculateOptimalRoute(any()) } returns TripServiceResponse(3, "1234", listOf())
 
         val responseAsString = mvc.perform(
             MockMvcRequestBuilders
@@ -89,9 +97,10 @@ class TripControllerTest {
                 .content(objectMapper.writeValueAsString(calculatorInputs))
         ).andExpect(status().`is`(200)).andReturn().response.contentAsString
 
-        val calculatorOutputs = objectMapper.readValue<CalculatorOutputs>(responseAsString)
+        val calculatorOutputs = objectMapper.readValue<TripServiceResponse>(responseAsString)
 
-        assertEquals("1234", calculatorOutputs.mapId)
+        assertEquals("1234", calculatorOutputs.kml)
+        assertEquals(3, calculatorOutputs.daysAmount)
     }
 
     fun stubLogin() {

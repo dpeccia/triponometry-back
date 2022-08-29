@@ -43,22 +43,22 @@ class DistanceMatrixAdapterTest {
         val matrix = Gson().fromJson(fileContent, DistanceMatrixResponseDto::class.java)
 
         val placesInputs = listOf(
-            PlaceInput(Coordinates(-34.598682,-58.511546), 120),
-            PlaceInput(Coordinates(-34.616954,-58.433532), 60),
-            PlaceInput(Coordinates(-34.605102,-58.493364), 40),
-            PlaceInput(Coordinates(-34.606149,-58.438509), 30)
+            PlaceInput("Hotel", Coordinates(-34.598682,-58.511546), 120),
+            PlaceInput("Activity 1", Coordinates(-34.616954,-58.433532), 60),
+            PlaceInput("Activity 2", Coordinates(-34.605102,-58.493364), 40),
+            PlaceInput("Activity 3", Coordinates(-34.606149,-58.438509), 30)
         )
 
         val places = distanceMatrixAdapter.matrixToListOfPlaces(matrix, placesInputs)
 
-        assertEquals("Baigorria 3263, C1417 FRK, Buenos Aires, Argentina",places[0].name)
+        assertEquals("Hotel",places[0].name)
         assertEquals(0, places[0].id)
         assertEquals(69, places[0].durations[1])
         assertEquals(26, places[0].durations[2])
         assertEquals(83, places[0].durations[3])
         assertEquals(120, places[0].timeSpent)
 
-        assertEquals("Acceso A Patricias Argentinas 171, C1414 CABA, Argentina",places[1].name)
+        assertEquals("Activity 1",places[1].name)
         assertEquals(1, places[1].id)
         assertEquals(70, places[1].durations[0])
         assertEquals(92, places[1].durations[2])

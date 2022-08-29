@@ -1,21 +1,32 @@
 package utn.triponometry.domain
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.google.maps.model.TravelMode
+import java.time.LocalTime
 
 data class CalculatorInputs(
-    val daysRestriction: Int, // TODO: tener en cuenta esto
-    val freeDays: Int, // TODO: tener en cuenta esto
-    val timePerDay: Int, // minutes
     val travelMode: TravelMode,
     val places: List<PlaceInput>,
-    val startHour: Int,
+    val time: TimeInput
+)
+
+data class PlaceInput (
+    val name: String,
+    val coordinates: Coordinates,
+    val timeSpent: Int
+)
+
+data class TimeInput (
+    val startHour: String,
+    val finishHour: String,
     val breakfast: Int,
     val lunch: Int,
     val snack: Int,
     val dinner: Int,
-)
-
-data class PlaceInput (
-    val coordinates: Coordinates,
-    val timeSpent: Int
-)
+    val freeDays: Int
+) {
+    @JsonIgnore
+    val startTime = LocalTime.parse(startHour)
+    @JsonIgnore
+    val finishTime = LocalTime.parse(finishHour)
+}

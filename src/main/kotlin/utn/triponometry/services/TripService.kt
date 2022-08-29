@@ -19,6 +19,7 @@ import utn.triponometry.helpers.IllegalTripException
 import utn.triponometry.properties.TriponometryProperties
 import utn.triponometry.repos.TripRepository
 import utn.triponometry.repos.UserRepository
+import java.time.Duration
 
 @Service
 class TripService(
@@ -34,7 +35,9 @@ class TripService(
         val xmlMap = getMapFileData(optimalRouteInDays, calculatorInputs.travelMode)
         val idOfKml = Storage(triponometryProperties).createAgenda(AgendaRequest( xmlMap))
         val listOfEvents = CalendarAdapter().getListOfEvents(optimalRouteInDays,calculatorInputs)
-        return TripServiceResponse(idOfKml,listOfEvents)
+
+        val daysAmount = optimalRouteInDays.size + calculatorInputs.time.freeDays
+        return TripServiceResponse(daysAmount, idOfKml, listOfEvents)
     }
 
     fun getDurationBetween(placesInputs: List<PlaceInput>, travelMode: TravelMode): List<Place> {
@@ -49,6 +52,7 @@ class TripService(
     }
 
     fun splitCompleteRouteInDays(bestCompleteRoute: Individual, calculatorInputs: CalculatorInputs): List<Day> {
+        val timePerDay = calculateTimePerDay(calculatorInputs.time)
         val places = bestCompleteRoute.places
         val accommodation = places.first()
         val activities = places.takeLast(places.size - 1)
@@ -59,7 +63,7 @@ class TripService(
         while (activitiesNotInRoutes.isNotEmpty()) {
             val day = Day(number, mutableListOf(accommodation))
 
-            createRouteForDay(day, activitiesNotInRoutes, calculatorInputs.timePerDay)
+            createRouteForDay(day, activitiesNotInRoutes, timePerDay)
 
             days.add(day)
             number += 1
@@ -69,6 +73,9 @@ class TripService(
 
         return days.toList()
     }
+
+    fun calculateTimePerDay(time: TimeInput) =
+        (Duration.between(time.startTime, time.finishTime).toMinutes() - time.breakfast - time.lunch - time.snack - time.dinner).toInt()
 
     fun createRouteForDay(day: Day, activitiesNotInRoutes: MutableList<Place>, timePerDay: Int) {
         val activitiesAlreadyInRoute = mutableListOf<Place>()

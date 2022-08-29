@@ -25,7 +25,7 @@ class DistanceMatrixAdapter {
     fun matrixToListOfPlaces(matrix: DistanceMatrixResponseDto, placesInputs: List<PlaceInput>): List<Place> {
         val places = mutableListOf<Place>()
         matrix.rows.forEachIndexed { i, _ -> places.add(
-            Place(i,matrix.origin_addresses[i],elementsToDistanceMap(i, matrix.rows[i].elements), placesInputs[i].timeSpent, placesInputs[i].coordinates)
+            Place(i, placesInputs[i].name, elementsToDistanceMap(i, matrix.rows[i].elements), placesInputs[i].timeSpent, placesInputs[i].coordinates)
         )}
         return places.toList()
     }

@@ -30,7 +30,6 @@ class TripServiceTest {
     private val activity6 = Place(6, "Activity 6", mapOf(0 to 13, 1 to 13, 2 to 20, 3 to 22, 4 to 19, 5 to 22), 120)
 
     private val activities = listOf(activity6, activity3, activity1, activity2, activity5, activity4)
-    private val timePerDay = 660 // minutes (11 hours)
 
     val tripRepository: TripRepository = mockk()
     val userRepository: UserRepository = mockk()
@@ -43,7 +42,7 @@ class TripServiceTest {
     fun `creating route for a day`() {
         val day = Day(1, mutableListOf(hotel))
 
-        tripService.createRouteForDay(day, activities.toMutableList(), timePerDay)
+        tripService.createRouteForDay(day, activities.toMutableList(), 660)
 
         val expectedRoute = listOf(hotel, activity6, activity3, activity1, activity2)
         assertEquals(expectedRoute, day.route.toList())
@@ -54,7 +53,9 @@ class TripServiceTest {
         val places = mutableListOf(hotel)
         places.addAll(activities)
         val bestCompleteRoute = Individual(places)
-        val calculatorInputs = CalculatorInputs(0,0, timePerDay, TravelMode.DRIVING, listOf(),9,30,60,0,60)
+
+        val timeInput = TimeInput("09:00", "21:00", 30, 30, 0, 0, 0)
+        val calculatorInputs = CalculatorInputs(TravelMode.DRIVING, listOf(), timeInput)
 
         val days = tripService.splitCompleteRouteInDays(bestCompleteRoute, calculatorInputs)
 
@@ -103,12 +104,10 @@ class TripServiceTest {
         every { tripRepository.findByUserAndName(any(),any()) } returns Optional.of(trip)
         every { userRepository.findById(ObjectId("666f6f2d6261722d71757578")) } returns Optional.of(user)
         every { tripRepository.save(any()) } answers { firstArg() }
-
-
+        
         val exception = assertThrows<IllegalTripException> { tripService.createNewTrip(request, ObjectId("666f6f2d6261722d71757578")) }
         assertEquals("There is already a trip under that name", exception.message)
     }
-
 
     @Test
     fun `trip is updated successfully`() {
@@ -128,7 +127,6 @@ class TripServiceTest {
         assertEquals(newTrip.status,TripStatus.DRAFT)
     }
 
-
     @Test
     fun `trip is not updated if it doesn't exist`() {
         val file = File("src/test/resources/request_new_trip.json")
@@ -144,7 +142,28 @@ class TripServiceTest {
         val exception = assertThrows<IllegalTripException> {
             tripService.updateTripStatus(ObjectId("666f6f2d6261722d71757578"),ObjectId("666f6f2d6261722d71757578"),TripStatus.DRAFT)
         }
-        assertEquals("A trip under that name does not exist", exception.message)
+        assertEquals("A trip under that id does not exist", exception.message)
+    }
+
+    @Test
+    fun `calculating the user's time per day when there are meal times`() {
+        val timeInput = TimeInput("09:00", "22:30", 30, 30, 60, 30, 0)
+
+        val timePerDay = tripService.calculateTimePerDay(timeInput)
+
+        assertEquals(660, timePerDay) // 11 hours = 660 minutes
+    }
+
+    @Test
+    fun `calculating the user's time per day when there are no meal times`() {
+        val timeInput = TimeInput("09:00", "21:00", 0, 0, 0, 0, 0)
+        val timeInput2 = TimeInput("07:00", "23:30", 0, 0, 0, 0, 0)
+
+        val timePerDay = tripService.calculateTimePerDay(timeInput)
+        val timePerDay2 = tripService.calculateTimePerDay(timeInput2)
+
+        assertEquals(720, timePerDay) // 12 hours = 720 minutes
+        assertEquals(990, timePerDay2) // 16 hours and 30 minutes = 990 minutes
     }
 
     @Test
@@ -179,9 +198,5 @@ class TripServiceTest {
         assertNotNull(newTrip.id)
         assertEquals("Francia",newTrip.name)
         assertEquals(TripStatus.DRAFT,newTrip.status)
-
     }
-
-
-
 }
