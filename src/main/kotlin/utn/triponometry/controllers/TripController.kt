@@ -26,13 +26,12 @@ class TripController(private val tripService: TripService): BaseController() {
     @PostMapping
     @ApiOperation("Creates a new trip")
     fun createNewTrip(@RequestBody newTripRequest: NewTripRequest, request: HttpServletRequest): ResponseEntity<Any> {
-       val userId = checkAndGetUserId(request)
-       val response: TripDto
-       if (newTripRequest.calculatorOutputs == null) {
-           response = tripService.createNewDraft(newTripRequest, userId)
-       }else{
-           response = tripService.createNewTrip(newTripRequest, userId)
-       }
+        val userId = checkAndGetUserId(request)
+        val response = if (newTripRequest.calculatorOutputs == null) {
+            tripService.createNewDraft(newTripRequest, userId)
+        } else {
+            tripService.createNewTrip(newTripRequest, userId)
+        }
         return ResponseEntity.ok(response)
     }
 

@@ -10,7 +10,7 @@ data class NewTripRequest (
 
 data class CalculatorInputsDto(
     val city: CityDto,
-    val accomodation: AccomodationDto,
+    val accommodation: AccomodationDto,
     val activities: List<ActivityDto>,
     val horarios: HorariosDto,
     val mobility: String
@@ -18,14 +18,15 @@ data class CalculatorInputsDto(
 
 data class CalculatorOutputsDto(
     val mapId: String,
-    val events: List<EventDto>
+    val events: List<EventDto>,
+    val daysAmount: Int
 )
 
 data class CityDto(
     val imageUrl: String,
-    val wikiDataId : String,
+    val wikiDataId : String? = null,
     val name: String,
-    val region: String,
+    val region: String? = null,
     val country: String,
     val latitude: Float,
     val longitude: Float
@@ -35,19 +36,19 @@ data class AccomodationDto(
     val name: String,
     val latitude: Float,
     val longitude: Float,
-    val rate: Int
+    val rate: Int? = null
 )
 
 data class ActivityDto(
     val name: String,
     val latitude: Float,
     val longitude: Float,
-    val rate: Int,
-    val wikidata: String,
-    val image: String,
-    val description: String,
-    val wikipediaEnglishLink: String,
-    val wikipediaSpanishLink: String
+    val rate: Int? = null,
+    val wikidata: String? = null,
+    val image: String? = null,
+    val description: String? = null,
+    val wikipediaEnglishLink: String? = null,
+    val wikipediaSpanishLink: String? = null
 )
 
 data class HorariosDto(
