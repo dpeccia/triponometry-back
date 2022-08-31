@@ -1,5 +1,6 @@
 package utn.triponometry.services
 
+import org.bson.types.ObjectId
 import org.springframework.http.ResponseCookie
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
@@ -24,6 +25,9 @@ class UserService(private val userRepository: UserRepository, private val sha512
 
         return userRepository.save(user).dto()
     }
+
+    fun checkUserLogin(user: ObjectId): UserDtoWithoutSensitiveInformation =
+        userRepository.findById(user).get().dto()
 
     fun login(user: UserDtoWithoutSensitiveInformation): ResponseCookie {
         val jwt = JwtSigner.createJwt(user.id)
