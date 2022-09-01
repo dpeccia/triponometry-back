@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*
 import utn.triponometry.domain.CalculatorInputs
 import utn.triponometry.domain.TripStatus
 import utn.triponometry.domain.dtos.NewTripRequest
+import utn.triponometry.domain.dtos.TripStatusDto
 import utn.triponometry.domain.external.dtos.TripDto
 import utn.triponometry.services.TripService
 import javax.servlet.http.HttpServletRequest
@@ -53,10 +54,10 @@ class TripController(private val tripService: TripService): BaseController() {
 
     @PutMapping
     @ApiOperation("Update a trip status")
-    fun updateTripStatus(request: HttpServletRequest,id: String, newStatus: TripStatus): ResponseEntity<Any> {
+    fun updateTripStatus(@RequestBody tripStatusDto: TripStatusDto, request: HttpServletRequest): ResponseEntity<Any> {
         val userId = checkAndGetUserId(request)
-        val tripId = ObjectId(id)
-        val response = tripService.updateTripStatus(userId,tripId,newStatus)
+        val tripId = ObjectId(tripStatusDto.id)
+        val response = tripService.updateTripStatus(userId, tripId, tripStatusDto.newStatus)
         return ResponseEntity.ok(response)
     }
 
