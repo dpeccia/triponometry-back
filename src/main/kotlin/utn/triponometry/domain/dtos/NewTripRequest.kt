@@ -3,9 +3,9 @@ package utn.triponometry.domain.dtos
 import utn.triponometry.domain.external.dtos.EventDto
 
 data class NewTripRequest (
-    val name: String,
+    var name: String,
     val calculatorInputs: CalculatorInputsDto,
-    val calculatorOutputs: CalculatorOutputsDto? = null,
+    var calculatorOutputs: CalculatorOutputsDto? = null,
 )
 
 data class CalculatorInputsDto(
@@ -48,7 +48,8 @@ data class ActivityDto(
     val image: String? = null,
     val description: String? = null,
     val wikipediaEnglishLink: String? = null,
-    val wikipediaSpanishLink: String? = null
+    val wikipediaSpanishLink: String? = null,
+    val timeSpent: Int? = null
 )
 
 data class HorariosDto(

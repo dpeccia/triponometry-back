@@ -52,26 +52,129 @@
     "mobility": "WALKING"
   },
   "calculatorOutputs": {
+    "daysAmount": 2,
+    "mapId": "a1b2ba42-8360-4587-9e3b-0b3e4981a68c",
     "events": [
       {
-        "end": {
-          "day": 27,
-          "hour": 12,
-          "minute": 0,
-          "month": 7,
-          "year": 2022
-        },
-        "name": "Actividad 1",
+        "name": "Desayuno",
         "start": {
-          "day": 27,
-          "hour": 11,
-          "minute": 0,
+          "year": 2022,
           "month": 7,
-          "year": 2022
+          "day": 29,
+          "hour": 10,
+          "minute": 0
+        },
+        "end": {
+          "year": 2022,
+          "month": 7,
+          "day": 29,
+          "hour": 10,
+          "minute": 30
+        }
+      },
+      {
+        "name": "Actividad 2 Francia 2",
+        "start": {
+          "year": 2022,
+          "month": 7,
+          "day": 29,
+          "hour": 10,
+          "minute": 30
+        },
+        "end": {
+          "year": 2022,
+          "month": 7,
+          "day": 29,
+          "hour": 11,
+          "minute": 30
+        }
+      },
+      {
+        "name": "Almuerzo",
+        "start": {
+          "year": 2022,
+          "month": 7,
+          "day": 29,
+          "hour": 11,
+          "minute": 30
+        },
+        "end": {
+          "year": 2022,
+          "month": 7,
+          "day": 29,
+          "hour": 12,
+          "minute": 0
+        }
+      },
+      {
+        "name": "Actividad 1 Francia 2",
+        "start": {
+          "year": 2022,
+          "month": 7,
+          "day": 29,
+          "hour": 12,
+          "minute": 0
+        },
+        "end": {
+          "year": 2022,
+          "month": 7,
+          "day": 29,
+          "hour": 13,
+          "minute": 0
+        }
+      },
+      {
+        "name": "Merienda",
+        "start": {
+          "year": 2022,
+          "month": 7,
+          "day": 29,
+          "hour": 16,
+          "minute": 0
+        },
+        "end": {
+          "year": 2022,
+          "month": 7,
+          "day": 29,
+          "hour": 16,
+          "minute": 30
+        }
+      },
+      {
+        "name": "Cena",
+        "start": {
+          "year": 2022,
+          "month": 7,
+          "day": 29,
+          "hour": 19,
+          "minute": 0
+        },
+        "end": {
+          "year": 2022,
+          "month": 7,
+          "day": 29,
+          "hour": 19,
+          "minute": 30
+        }
+      },
+      {
+        "name": "Día Libre",
+        "start": {
+          "year": 2022,
+          "month": 7,
+          "day": 30,
+          "hour": 10,
+          "minute": 0
+        },
+        "end": {
+          "year": 2022,
+          "month": 7,
+          "day": 30,
+          "hour": 22,
+          "minute": 0
         }
       }
-    ],
-    "mapId": "ID"
+    ]
   },
   "name":"Francia"
 }

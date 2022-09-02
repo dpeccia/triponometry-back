@@ -6,10 +6,9 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import utn.triponometry.domain.CalculatorInputs
-import utn.triponometry.domain.TripStatus
 import utn.triponometry.domain.dtos.NewTripRequest
 import utn.triponometry.domain.dtos.TripStatusDto
-import utn.triponometry.domain.external.dtos.TripDto
+import utn.triponometry.domain.dtos.TripUpdateDto
 import utn.triponometry.services.TripService
 import javax.servlet.http.HttpServletRequest
 
@@ -73,6 +72,15 @@ class TripController(private val tripService: TripService): BaseController() {
         val userId = checkAndGetUserId(request)
         val tripObjectId = ObjectId(tripId)
         val response = tripService.getTrip(userId,tripObjectId)
+        return ResponseEntity.ok(response)
+    }
+
+    @PutMapping("/update")
+    @ApiOperation("Update a trip or a draft")
+    fun updateDraft(request: HttpServletRequest,@RequestBody tripUpdateDto: TripUpdateDto): ResponseEntity<Any> {
+        val userId = checkAndGetUserId(request)
+        val tripId = ObjectId(tripUpdateDto.id)
+        val response = tripService.updateTrip(userId,tripId,tripUpdateDto.trip)
         return ResponseEntity.ok(response)
     }
 }

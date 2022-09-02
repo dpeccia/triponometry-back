@@ -1,0 +1,68 @@
+{
+  "calculatorInputs": {
+    "accomodation": {
+      "latitude": 48.85522602158196,
+      "longitude": 2.3306858244936306,
+      "name": "Hotel Francia",
+      "rate": 0
+    },
+    "activities": [
+      {
+        "description": "Actividad 1: Francia",
+        "image": "imagen",
+        "latitude": 48.86061073403763,
+        "longitude": 2.3376394466419432,
+        "name": "Actividad 1 Francia",
+        "rate": 0,
+        "timeSpent": 60,
+        "wikidata": "string",
+        "wikipediaEnglishLink": "string",
+        "wikipediaSpanishLink": "string"
+      },
+      {
+        "description": "Actividad 2: Francia",
+        "image": "imagen",
+        "latitude": 48.85837494629575,
+        "longitude": 2.2944791163134277,
+        "name": "Actividad 2 Francia",
+        "rate": 0,
+        "timeSpent": 60,
+        "wikidata": "string",
+        "wikipediaEnglishLink": "string",
+        "wikipediaSpanishLink": "string"
+      }
+    ],
+    "city": {
+      "country": "Francia",
+      "imageUrl": "imagen de Francia",
+      "latitude": 48.86175723811341,
+      "longitude": 2.3406756352030853,
+      "name": "Francia",
+      "region": "Francia",
+      "wikiDataId": "string"
+    },
+    "horarios": {
+      "almuerzo": {
+        "number": "min",
+        "time": "30"
+      },
+      "cena": {
+        "number": "min",
+        "time": "30"
+      },
+      "desayuno": {
+        "number": "min",
+        "time": "30"
+      },
+      "despertarse": "09:00",
+      "dormirse": "22:00",
+      "libres": "1",
+      "merienda": {
+        "number": "min",
+        "time": "30"
+      }
+    },
+    "mobility": "WALKING"
+  },
+  "name": "Francia"
+}

@@ -4,8 +4,7 @@ import com.google.maps.model.TravelMode
 import org.bson.types.ObjectId
 import org.springframework.stereotype.Service
 import utn.triponometry.domain.*
-import utn.triponometry.domain.dtos.NewTripRequest
-import utn.triponometry.domain.dtos.TripsResponse
+import utn.triponometry.domain.dtos.*
 import utn.triponometry.domain.external.CalendarAdapter
 import utn.triponometry.domain.external.Directions
 import utn.triponometry.domain.external.GoogleApi
@@ -33,8 +32,10 @@ class TripService(
         val bestCompleteRoute = calculateCompleteRoute(places)
         val optimalRouteInDays = splitCompleteRouteInDays(bestCompleteRoute, calculatorInputs)
         val xmlMap = getMapFileData(optimalRouteInDays, calculatorInputs.travelMode)
+
         val idOfKml = Storage(triponometryProperties).createAgenda(AgendaRequest( xmlMap))
         val listOfEvents = CalendarAdapter().getListOfEvents(optimalRouteInDays,calculatorInputs)
+
 
         val daysAmount = optimalRouteInDays.size + calculatorInputs.time.freeDays
         return TripServiceResponse(daysAmount, idOfKml, listOfEvents)
@@ -77,6 +78,7 @@ class TripService(
     fun calculateTimePerDay(time: TimeInput) =
         (Duration.between(time.startTime, time.finishTime).toMinutes() - time.breakfast - time.lunch - time.snack - time.dinner).toInt()
 
+
     fun createRouteForDay(day: Day, activitiesNotInRoutes: MutableList<Place>, timePerDay: Int) {
         val activitiesAlreadyInRoute = mutableListOf<Place>()
 
@@ -96,29 +98,36 @@ class TripService(
     fun getAgendaFromAws(id: String): String {
         return Storage(triponometryProperties).getAgendaFromAws(id)
     }
+
     fun getMapFileData(locations: List<Day>, travelMode: TravelMode): String =
         Directions(triponometryProperties, googleApi).createKMLFile(locations, travelMode)
 
     fun createNewTrip(newTripRequest: NewTripRequest, userId: ObjectId): TripDto {
         val user = userRepository.findById(userId).get()
-        if(tripRepository.findByUserAndName(user,newTripRequest.name).isPresent){
+        if (tripRepository.findByUserAndName(user, newTripRequest.name).isPresent) {
             throw IllegalTripException("There is already a trip under that name")
         }
-        val trip = Trip(newTripRequest.name ,newTripRequest.calculatorInputs, user,TripStatus.ACTIVE, newTripRequest.calculatorOutputs)
+        val trip = Trip(
+            newTripRequest.name,
+            newTripRequest.calculatorInputs,
+            user,
+            TripStatus.ACTIVE,
+            newTripRequest.calculatorOutputs
+        )
         return tripRepository.save(trip).dto()
     }
 
     fun createNewDraft(newTripRequest: NewTripRequest, userId: ObjectId): TripDto {
         val user = userRepository.findById(userId).get()
-        if(tripRepository.findByUserAndName(user,newTripRequest.name).isPresent){
+        if (tripRepository.findByUserAndName(user, newTripRequest.name).isPresent) {
             throw IllegalTripException("There is already a trip under that name")
         }
-        val trip = Trip(newTripRequest.name ,newTripRequest.calculatorInputs, user,TripStatus.DRAFT)
+        val trip = Trip(newTripRequest.name, newTripRequest.calculatorInputs, user, TripStatus.DRAFT)
         return tripRepository.save(trip).dto()
     }
 
     fun getAllTrips(): List<TripDto> {
-        return tripRepository.findAll().filter { t -> t.isComplete() }.map{ trip -> trip.dto()}
+        return tripRepository.findAll().filter { t -> t.isComplete() }.map { trip -> trip.dto() }
     }
 
     fun getTrips(userId: ObjectId): TripsResponse {
@@ -128,28 +137,47 @@ class TripService(
         val active = trips.filter { t -> t.isStatus(TripStatus.ACTIVE) }.map { t -> t.dto() }
         val archived = trips.filter { t -> t.isStatus(TripStatus.ARCHIVED) }.map { t -> t.dto() }
         val draft = trips.filter { t -> t.isStatus(TripStatus.DRAFT) }.map { t -> t.dto() }
-        return TripsResponse(active,archived,draft)
+        return TripsResponse(active, archived, draft)
     }
 
     fun updateTripStatus(userId: ObjectId, id: ObjectId, newStatus: TripStatus): TripDto {
         val user = userRepository.findById(userId).get()
-        val tripOptional = tripRepository.findByUserAndId(user,id)
+        val tripOptional = tripRepository.findByUserAndId(user, id)
 
-        if(tripOptional.isPresent){
+        if (tripOptional.isPresent) {
             val trip = tripOptional.get()
             trip.status = newStatus
-            return  tripRepository.save(trip).dto()
+            return tripRepository.save(trip).dto()
         }
-            throw IllegalTripException("A trip under that id does not exist")
+        throw IllegalTripException("A trip under that id does not exist")
     }
 
     fun getTrip(userId: ObjectId, tripId: ObjectId): TripDto {
         val user = userRepository.findById(userId).get()
-        val tripOptional = tripRepository.findByUserAndId(user,tripId)
+        val tripOptional = tripRepository.findByUserAndId(user, tripId)
 
-        if(tripOptional.isPresent){
+        if (tripOptional.isPresent) {
             val trip = tripOptional.get()
-            return  trip.dto()
+            return trip.dto()
+        }
+        throw IllegalTripException("A trip under that id does not exist")
+    }
+
+    fun updateTrip(userId: ObjectId, draftId: ObjectId, newDraft: NewTripRequest): TripDto {
+        val user = userRepository.findById(userId).get()
+        val tripOptional = tripRepository.findByUserAndId(user, draftId)
+
+        if (tripOptional.isPresent) {
+            val trip = tripOptional.get()
+            trip.calculatorInputs = newDraft.calculatorInputs
+            trip.name = newDraft.name
+
+            if (newDraft.calculatorOutputs != null){
+                trip.calculatorOutputs = newDraft.calculatorOutputs
+                trip.status = TripStatus.ACTIVE
+            }
+
+            return tripRepository.save(trip).dto()
         }
         throw IllegalTripException("A trip under that id does not exist")
     }

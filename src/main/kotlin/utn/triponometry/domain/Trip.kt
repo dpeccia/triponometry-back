@@ -14,9 +14,10 @@ enum class TripStatus {
 }
 
 @Document(collection = "Trips")
-class Trip(val name: String, val calculatorInputs: CalculatorInputsDto,
-           @DBRef val user: User, @Indexed var status: TripStatus,
-           val calculatorOutputs: CalculatorOutputsDto? = null) {
+class Trip(
+    var name: String, var calculatorInputs: CalculatorInputsDto,
+    @DBRef val user: User, @Indexed var status: TripStatus,
+    var calculatorOutputs: CalculatorOutputsDto? = null) {
     @Id
     var id: ObjectId? = ObjectId.get()
 

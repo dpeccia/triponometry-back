@@ -137,12 +137,12 @@ class TripServiceTest {
 
         every { tripRepository.findByUserAndId(any(),any()) } returns Optional.empty()
         every { userRepository.findById(ObjectId("666f6f2d6261722d71757578")) } returns Optional.of(user)
-        every { tripRepository.save(any()) } answers { firstArg() }
 
         val exception = assertThrows<IllegalTripException> {
             tripService.updateTripStatus(ObjectId("666f6f2d6261722d71757578"),ObjectId("666f6f2d6261722d71757578"),TripStatus.DRAFT)
         }
         assertEquals("A trip under that id does not exist", exception.message)
+
     }
 
     @Test
@@ -164,6 +164,7 @@ class TripServiceTest {
 
         assertEquals(720, timePerDay) // 12 hours = 720 minutes
         assertEquals(990, timePerDay2) // 16 hours and 30 minutes = 990 minutes
+
     }
 
     @Test
@@ -185,7 +186,7 @@ class TripServiceTest {
 
     @Test
     fun `trip is created as draft if it doesn't contain calculator outputs`() {
-        val file = File("src/test/resources/request_new_trip.json")
+        val file = File("src/test/resources/request_new_draft.json")
         val fileContent = file.readText()
         val request = Gson().fromJson(fileContent, NewTripRequest::class.java)
         val user = User("mail@gmail.com","password")
@@ -199,4 +200,41 @@ class TripServiceTest {
         assertEquals("Francia",newTrip.name)
         assertEquals(TripStatus.DRAFT,newTrip.status)
     }
+
+    @Test
+    fun `trip draft is updated successfully`() {
+        val file = File("src/test/resources/request_new_draft.json")
+        val fileContent = file.readText()
+        val request = Gson().fromJson(fileContent, NewTripRequest::class.java)
+        request.name = "Francia - Paris"
+        val user = User("mail@gmail.com","password")
+        val trip = Trip("Francia",request.calculatorInputs,user,TripStatus.DRAFT)
+
+        every { tripRepository.findByUserAndId(any(),any()) } returns Optional.of(trip)
+        every { userRepository.findById(ObjectId("666f6f2d6261722d71757578")) } returns Optional.of(user)
+        every { tripRepository.save(any()) } answers { firstArg() }
+
+        val newDraft = tripService.updateTrip(ObjectId("666f6f2d6261722d71757578"),ObjectId("666f6f2d6261722d71757578"),request)
+        assertNotNull(newDraft.id)
+        assertEquals("Francia - Paris",newDraft.name)
+        assertEquals(TripStatus.DRAFT,newDraft.status)
+        assertNull(newDraft.calculatorOutputs)
+    }
+
+    @Test
+    fun `trip draft is not updated if it doesn't exist`() {
+        val file = File("src/test/resources/request_new_draft.json")
+        val fileContent = file.readText()
+        val request = Gson().fromJson(fileContent, NewTripRequest::class.java)
+        val user = User("mail@gmail.com","password")
+
+        every { userRepository.findById(ObjectId("666f6f2d6261722d71757578")) } returns Optional.of(user)
+        every { tripRepository.findByUserAndId(any(),any()) } returns Optional.empty()
+
+        val exception = assertThrows<IllegalTripException> {
+            tripService.updateTrip(ObjectId("666f6f2d6261722d71757578"),ObjectId("666f6f2d6261722d71757578"),request)
+        }
+        assertEquals("A trip under that id does not exist", exception.message)
+    }
+
 }
