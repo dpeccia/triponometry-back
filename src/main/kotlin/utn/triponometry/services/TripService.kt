@@ -32,10 +32,8 @@ class TripService(
         val bestCompleteRoute = calculateCompleteRoute(places)
         val optimalRouteInDays = splitCompleteRouteInDays(bestCompleteRoute, calculatorInputs)
         val xmlMap = getMapFileData(optimalRouteInDays, calculatorInputs.travelMode)
-
-        val idOfKml = Storage(triponometryProperties).createAgenda(AgendaRequest( xmlMap))
-        val listOfEvents = CalendarAdapter().getListOfEvents(optimalRouteInDays,calculatorInputs)
-
+        val idOfKml = Storage(triponometryProperties).createAgenda(AgendaRequest(xmlMap))
+        val listOfEvents = CalendarAdapter().getListOfEvents(optimalRouteInDays, calculatorInputs)
 
         val daysAmount = optimalRouteInDays.size + calculatorInputs.time.freeDays
         return TripServiceResponse(daysAmount, idOfKml, listOfEvents)
@@ -182,4 +180,7 @@ class TripService(
         throw IllegalTripException("A trip under that id does not exist")
     }
 
+    fun shareTrip(tripId: ObjectId): TripDto {
+        return tripRepository.findById(tripId).get().dto()
+    }
 }

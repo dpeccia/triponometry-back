@@ -12,4 +12,5 @@ interface TripRepository : MongoRepository<Trip, String>{
    fun findByUser(user: User): List<Trip>
    fun findByUserAndName(user: User, name: String): Optional<Trip>
    fun findByUserAndId(user: User, id: ObjectId): Optional<Trip>
+   fun findById(id: ObjectId): Optional<Trip>
 }

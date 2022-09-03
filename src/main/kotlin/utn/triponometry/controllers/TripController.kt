@@ -83,4 +83,12 @@ class TripController(private val tripService: TripService): BaseController() {
         val response = tripService.updateTrip(userId,tripId,tripUpdateDto.trip)
         return ResponseEntity.ok(response)
     }
+
+    @GetMapping("/explorar/{idViaje}")
+    fun getTrip(request: HttpServletRequest, @PathVariable idViaje: String): ResponseEntity<Any> {
+        checkAndGetUserId(request)
+        val response = tripService.shareTrip(ObjectId(idViaje))
+        return ResponseEntity.ok(response)
+    }
+
 }
