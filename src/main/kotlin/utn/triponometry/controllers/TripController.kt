@@ -67,11 +67,11 @@ class TripController(private val tripService: TripService): BaseController() {
         return ResponseEntity.ok(response)
     }
 
-    @GetMapping("/info")
+    @GetMapping("/info/{idViaje}")
     @ApiOperation("Returns a specific trip")
-    fun getATrip(request: HttpServletRequest,tripId: String): ResponseEntity<Any> {
+    fun getATrip(request: HttpServletRequest,@PathVariable idViaje: String): ResponseEntity<Any> {
         val userId = checkAndGetUserId(request)
-        val tripObjectId = ObjectId(tripId)
+        val tripObjectId = ObjectId(idViaje)
         val response = tripService.getTrip(userId,tripObjectId)
         return ResponseEntity.ok(response)
     }
