@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import utn.triponometry.domain.*
 import utn.triponometry.domain.dtos.NewTripRequest
+import utn.triponometry.domain.dtos.Review
+import utn.triponometry.domain.dtos.ReviewRequest
 import utn.triponometry.domain.external.GoogleApi
 import utn.triponometry.domain.genetic_algorithm.Individual
 import utn.triponometry.helpers.IllegalTripException
@@ -18,6 +20,7 @@ import utn.triponometry.repos.TripRepository
 import utn.triponometry.repos.UserRepository
 import java.io.File
 import java.util.*
+import kotlin.math.roundToInt
 
 class TripServiceTest {
 
@@ -233,6 +236,47 @@ class TripServiceTest {
 
         val exception = assertThrows<IllegalTripException> {
             tripService.updateTrip(ObjectId("666f6f2d6261722d71757578"),ObjectId("666f6f2d6261722d71757578"),request)
+        }
+        assertEquals("A trip under that id does not exist", exception.message)
+    }
+
+    @Test
+    fun `A review is added successfully to a trip`() {
+        val file = File("src/test/resources/request_new_trip.json")
+        val fileContent = file.readText()
+        val request = Gson().fromJson(fileContent, NewTripRequest::class.java)
+        val user = User("mail@gmail.com","password")
+        val trip = Trip("Francia",request.calculatorInputs,user,TripStatus.ACTIVE,request.calculatorOutputs)
+
+        val userId = ObjectId("6312585af244650fd3c36762")
+        val tripId = ObjectId("631258770e6cb8702cb599b4")
+        every { tripRepository.findById(tripId) } returns Optional.of(trip)
+        every { userRepository.findById(userId) } returns Optional.of(user)
+        every { tripRepository.save(any()) } answers { firstArg() }
+
+        val reviewRequest = ReviewRequest(4,true,"Muy bueno!")
+
+        val review = tripService.addReview(userId, tripId,reviewRequest)
+
+        assertNotNull(review.id)
+        assertEquals(1,trip.reviews.size)
+        assertEquals(review.id,trip.reviews[0].id.toString())
+    }
+
+    @Test
+    fun `A review is not added because trip doesn't exist`() {
+        val user = User("mail@gmail.com","password")
+
+        val userId = ObjectId("6312585af244650fd3c36762")
+        val tripId = ObjectId("631258770e6cb8702cb599b4")
+
+        every { tripRepository.findById(tripId) } returns Optional.empty()
+        every { userRepository.findById(userId) } returns Optional.of(user)
+
+        val reviewRequest = ReviewRequest(4,true,"Muy bueno!")
+
+        val exception = assertThrows<IllegalTripException> {
+            tripService.addReview(userId, tripId,reviewRequest)
         }
         assertEquals("A trip under that id does not exist", exception.message)
     }

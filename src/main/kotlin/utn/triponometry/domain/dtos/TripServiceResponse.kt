@@ -4,6 +4,8 @@ import utn.triponometry.domain.TripStatus
 import utn.triponometry.domain.User
 import utn.triponometry.domain.dtos.CalculatorInputsDto
 import utn.triponometry.domain.dtos.CalculatorOutputsDto
+import utn.triponometry.domain.dtos.Review
+import utn.triponometry.domain.dtos.ReviewDto
 
 data class TripServiceResponse(
     val daysAmount: Int,
@@ -40,5 +42,7 @@ data class TripDto(
     val calculatorInputs: CalculatorInputsDto,
     val user: User,
     var status: TripStatus,
-    val calculatorOutputs: CalculatorOutputsDto? = null
+    val calculatorOutputs: CalculatorOutputsDto? = null,
+    val reviews: List<ReviewDto>? = null,
+    var rating: Int? = null
 )

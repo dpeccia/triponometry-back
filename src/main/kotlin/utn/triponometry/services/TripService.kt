@@ -183,4 +183,24 @@ class TripService(
     fun shareTrip(tripId: ObjectId): TripDto {
         return tripRepository.findById(tripId).get().dto()
     }
+
+    fun addReview(userId: ObjectId, tripId: ObjectId, reviewRequest: ReviewRequest): ReviewDto {
+        val user = userRepository.findById(userId).get()
+        val tripOptional = tripRepository.findById(tripId)
+
+        if (tripOptional.isPresent) {
+            val trip = tripOptional.get()
+
+            if(trip.reviews.any { r -> r.fromUser(userId) }){
+                throw IllegalTripException("User has already reviewed this trip")
+            }
+
+            val review = Review(ObjectId(),user,reviewRequest.stars,reviewRequest.done,reviewRequest.description)
+            trip.reviews.add(review)
+
+            tripRepository.save(trip).dto()
+            return review.dto()
+        }
+        throw IllegalTripException("A trip under that id does not exist")
+    }
 }

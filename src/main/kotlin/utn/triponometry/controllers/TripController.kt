@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import utn.triponometry.domain.CalculatorInputs
 import utn.triponometry.domain.dtos.NewTripRequest
+import utn.triponometry.domain.dtos.ReviewRequest
 import utn.triponometry.domain.dtos.TripStatusDto
 import utn.triponometry.domain.dtos.TripUpdateDto
 import utn.triponometry.services.TripService
@@ -83,6 +84,14 @@ class TripController(private val tripService: TripService): BaseController() {
         val response = tripService.updateTrip(userId,tripId,tripUpdateDto.trip)
         return ResponseEntity.ok(response)
     }
+    @PostMapping("review/{idViaje}")
+    @ApiOperation("Creates a new review for a trip")
+    fun createNewTrip(request: HttpServletRequest,@PathVariable idViaje: String, @RequestBody review: ReviewRequest): ResponseEntity<Any> {
+        val userId = checkAndGetUserId(request)
+        val tripId = ObjectId(idViaje)
+        val response = tripService.addReview(userId,tripId,review)
+        return ResponseEntity.ok(response)
+    }
 
     @GetMapping("/explorar/{idViaje}")
     fun getTrip(request: HttpServletRequest, @PathVariable idViaje: String): ResponseEntity<Any> {
@@ -90,5 +99,4 @@ class TripController(private val tripService: TripService): BaseController() {
         val response = tripService.shareTrip(ObjectId(idViaje))
         return ResponseEntity.ok(response)
     }
-
 }
