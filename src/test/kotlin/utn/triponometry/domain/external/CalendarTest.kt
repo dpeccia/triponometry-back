@@ -22,8 +22,8 @@ import java.util.*
 class CalendarTest {
     private val hotel = Place(0, "Hotel", mapOf(1 to 30, 2 to 60, 3 to 35),0)
     private val colloseum = Place(1, "Colloseum", mapOf(0 to 25, 2 to 20, 3 to 25), 90)
-    private val fontanaDiTrevi = Place(2, "Fontana Di Trevi", mapOf(0 to 50, 1 to 20, 3 to 25), 185)
-    private val vaticano = Place(3, "Vaticano", mapOf(0 to 40, 1 to 30, 2 to 30), 125)
+    private val fontanaDiTrevi = Place(2, "Fontana Di Trevi", mapOf(0 to 50, 1 to 20, 3 to 25), 60)
+    private val vaticano = Place(3, "Vaticano", mapOf(0 to 40, 1 to 30, 2 to 30), 120)
     
     @Test
     fun `1 day, 2 activities, 4 meals`() {
@@ -38,17 +38,21 @@ class CalendarTest {
     }
 
     @Test
-    fun `1 day, 4 activities, 2 meals`() {
-        val timeInput = TimeInput("09:00", "23:00", 30,60,0,0, 0)
+    fun `1 day, 4 activities, 3 meals`() {
+        val timeInput = TimeInput("09:00", "23:00", 30,60,0,60, 0)
         val inputs = CalculatorInputs(TravelMode.WALKING, listOf(), timeInput)
 
         val day1 = Day(1, mutableListOf(hotel, colloseum, fontanaDiTrevi,vaticano,colloseum))
 
         val days = listOf(day1)
         val events = CalendarAdapter().getListOfEvents(days, inputs)
+
+        val calendar = CalendarAdapter().createCalendar(events,
+            DateDto(2022,8,7,9,0),
+        )
         
-        //Debería haber 10 eventos porque tenemos 4 eventos turisticos, y 3 comidas por DIA
-        Assertions.assertEquals(6,events.size)
+
+        Assertions.assertEquals(7,events.size)
     }
 
     @Test
@@ -78,7 +82,6 @@ class CalendarTest {
         val days = listOf(day1,day2,day3)
         val events = CalendarAdapter().getListOfEvents(days, inputs)
 
-        //Debería haber 10 eventos porque tenemos 4 eventos turisticos, y 3 comidas por DIA
         Assertions.assertEquals(15,events.size)
     }
 
@@ -94,7 +97,6 @@ class CalendarTest {
         val days = listOf(day1,day2,day3)
         val events = CalendarAdapter().getListOfEvents(days, inputs)
 
-        //Debería haber 10 eventos porque tenemos 4 eventos turisticos, y 3 comidas por DIA
         Assertions.assertEquals(17,events.size)
     }
 

@@ -9,6 +9,7 @@ import net.fortuna.ical4j.model.property.ProdId
 import net.fortuna.ical4j.model.property.Version
 import utn.triponometry.domain.CalculatorInputs
 import utn.triponometry.domain.Day
+import utn.triponometry.domain.Place
 import utn.triponometry.domain.external.dtos.DateDto
 import utn.triponometry.domain.external.dtos.EventDto
 import utn.triponometry.domain.external.dtos.EventTime
@@ -33,19 +34,26 @@ class CalendarAdapter() {
         return events
     }
 
+    fun getTravelTime(place: Place, id: Int): Int {
+        return place.durations[id]!!
+    }
+
     fun mapDayEventstoEventsDto(day: Day, inputs: CalculatorInputs, cal: GregorianCalendar): MutableList<EventDto> {
         val timeInputs = inputs.time
         cal[java.util.Calendar.HOUR_OF_DAY] = timeInputs.startTime.hour
         cal[java.util.Calendar.MINUTE] = timeInputs.startTime.minute
 
         val events = mutableListOf<EventDto>()
-        val activities = day.route.drop(1) //Saco el hotel de los eventos
         val defaultEvents = makeListOfDefaultEvents(inputs)
 
-        for (activity in activities) {
+        for ((index, activity) in day.route.withIndex()) {
             addDefaultEvent(cal, events, defaultEvents)
-            events.add(createEventDto(activity.name, cal, GregorianCalendar.MINUTE, activity.timeSpent!!))
-            cal.add(GregorianCalendar.MINUTE, activity.timeSpent)
+            if (index > 0) {
+                val travelTime = getTravelTime(day.route[index-1],activity.id)
+                cal.add(GregorianCalendar.MINUTE, travelTime)
+                events.add(createEventDto(activity.name, cal, GregorianCalendar.MINUTE, activity.timeSpent!!))
+                cal.add(GregorianCalendar.MINUTE, activity.timeSpent)
+            }
         }
 
         while (defaultEvents.isNotEmpty()) {
