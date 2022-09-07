@@ -203,4 +203,13 @@ class TripService(
         }
         throw IllegalTripException("A trip under that id does not exist")
     }
+
+    fun deleteDraft(userId: ObjectId, tripId: ObjectId){
+        val user = userRepository.findById(userId).get()
+        val trip = tripRepository.findByUserAndId(user,tripId).get()
+        if( trip.status != TripStatus.DRAFT) {
+            throw IllegalTripException("Cannot delete a trip without Draft status")
+        }
+        return tripRepository.delete(trip)
+    }
 }

@@ -99,4 +99,11 @@ class TripController(private val tripService: TripService): BaseController() {
         val response = tripService.shareTrip(ObjectId(idViaje))
         return ResponseEntity.ok(response)
     }
+
+    @DeleteMapping("/delete/{idDraft}")
+    fun deleteDraft(request: HttpServletRequest, @PathVariable idDraft: String): ResponseEntity<Any> {
+        val userId = checkAndGetUserId(request)
+        val response = tripService.deleteDraft(userId,ObjectId(idDraft))
+        return ResponseEntity.ok(response)
+    }
 }
