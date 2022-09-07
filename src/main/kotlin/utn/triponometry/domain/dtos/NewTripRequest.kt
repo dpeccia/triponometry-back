@@ -10,10 +10,10 @@ data class NewTripRequest (
 
 data class CalculatorInputsDto(
     val city: CityDto,
-    val accommodation: AccomodationDto,
-    val activities: List<ActivityDto>,
-    val horarios: HorariosDto,
-    val mobility: String
+    val accommodation: AccomodationDto? = null,
+    val activities: List<ActivityDto> ? = null,
+    val horarios: HorariosDto ? = null,
+    val mobility: String ? = null
 )
 
 data class CalculatorOutputsDto(
@@ -33,9 +33,9 @@ data class CityDto(
 )
 
 data class AccomodationDto(
-    val name: String,
-    val latitude: Float,
-    val longitude: Float,
+    val name: String? = null,
+    val latitude: Float? = null,
+    val longitude: Float? = null,
     val rate: Int? = null
 )
 
@@ -53,13 +53,13 @@ data class ActivityDto(
 )
 
 data class HorariosDto(
-    val desayuno: TimeDto,
-    val merienda: TimeDto,
-    val almuerzo: TimeDto,
-    val cena: TimeDto,
-    val despertarse: String,
-    val dormirse: String,
-    val libres: String
+    val desayuno: TimeDto ? = null,
+    val merienda: TimeDto ? = null,
+    val almuerzo: TimeDto ? = null,
+    val cena: TimeDto ? = null,
+    val despertarse: String ? = null,
+    val dormirse: String ? = null,
+    val libres: String ? = null
 )
 
 data class TimeDto(
