@@ -80,7 +80,7 @@ class CalendarAdapter() {
     fun addFreeDay(cal: GregorianCalendar, events: MutableList<EventDto>, start: LocalTime, finish: LocalTime) {
         cal[java.util.Calendar.HOUR_OF_DAY] = start.hour
         cal[java.util.Calendar.MINUTE] = start.minute
-        events.add(createEventDto("Día Libre", cal, GregorianCalendar.MINUTE, Duration.between(start, finish).toMinutes().toInt()))
+        events.add(createEventDto("Dia Libre", cal, GregorianCalendar.MINUTE, Duration.between(start, finish).toMinutes().toInt()))
         cal.add(GregorianCalendar.DAY_OF_MONTH, 1)
     }
 
@@ -111,8 +111,8 @@ class CalendarAdapter() {
         val tz = timezone.vTimeZone
         val startTime = eventTrip.start
         val endTime = eventTrip.end
-        val start = createDateTime(startTime.day, startTime.month, startTime.year, startTime.hour, startTime.minute)
-        val end = createDateTime(endTime.day, endTime.month, endTime.year, endTime.hour, endTime.minute)
+        val start = createDateTime(startTime.day, startTime.month, startTime.year, startTime.hour+3, startTime.minute)
+        val end = createDateTime(endTime.day, endTime.month, endTime.year, endTime.hour+3, endTime.minute)
         val event = VEvent(start, end, eventTrip.name)
         event.properties.add(tz.timeZoneId)
         return event
