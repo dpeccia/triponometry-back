@@ -29,6 +29,14 @@ class UserController(private val userService: UserService): BaseController() {
             .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "Set-Cookie")
             .body(user)
     }
+    @PostMapping("/gtokens")
+    @ApiOperation(value = "Google Log In")
+    fun googleLogIn(@RequestBody userDto: UserDto): ResponseEntity<Any> {
+        if(!userService.checkUserIsPresent(userDto)){
+            createUser(userDto)
+        }
+        return login(userDto)
+    }
 
     @DeleteMapping("/tokens")
     @ApiOperation(value = "Log Out")

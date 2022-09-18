@@ -47,6 +47,9 @@ class UserService(private val userRepository: UserRepository, private val sha512
             .secure(false)
             .build()
 
+    fun checkUserIsPresent(newUser: UserDto): Boolean =
+        userRepository.findByMail(newUser.mail).isPresent
+
     fun checkUserCredentials(userDto: UserDto) =
         userRepository.findByMailAndPassword(userDto.mail, sha512.getSHA512(userDto.password))
             .orElseThrow { BadLoginException("Wrong username or password") }.dto()
