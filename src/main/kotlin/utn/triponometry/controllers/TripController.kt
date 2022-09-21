@@ -6,6 +6,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import utn.triponometry.domain.CalculatorInputs
+import utn.triponometry.domain.dtos.ActivityRequest
 import utn.triponometry.domain.dtos.NewTripRequest
 import utn.triponometry.domain.dtos.ReviewRequest
 import utn.triponometry.domain.dtos.TripStatusDto
@@ -84,6 +85,7 @@ class TripController(private val tripService: TripService): BaseController() {
         val response = tripService.updateTrip(userId,tripId,tripUpdateDto.trip)
         return ResponseEntity.ok(response)
     }
+
     @PostMapping("review/{idViaje}")
     @ApiOperation("Creates a new review for a trip")
     fun createNewTrip(request: HttpServletRequest,@PathVariable idViaje: String, @RequestBody review: ReviewRequest): ResponseEntity<Any> {
@@ -104,6 +106,13 @@ class TripController(private val tripService: TripService): BaseController() {
     fun deleteDraft(request: HttpServletRequest, @PathVariable idDraft: String): ResponseEntity<Any> {
         val userId = checkAndGetUserId(request)
         val response = tripService.deleteDraft(userId,ObjectId(idDraft))
+        return ResponseEntity.ok(response)
+    }
+
+    @PostMapping("/info/activity")
+    fun getActivityInfo(request: HttpServletRequest, @RequestBody activity: ActivityRequest): ResponseEntity<Any> {
+        checkAndGetUserId(request)
+        val response = tripService.getActivityInfo(activity.cityName, activity.activityName)
         return ResponseEntity.ok(response)
     }
 }

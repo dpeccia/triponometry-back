@@ -212,4 +212,17 @@ class TripService(
         }
         return tripRepository.delete(trip)
     }
+
+    fun getActivityInfo(cityName: String, activityName: String): ActivityInfoResponse? {
+        val trips = tripRepository.findAllTripsThatContainsActivity(cityName, activityName)
+        if (trips.isEmpty()) return null
+
+        val activityTimeSpentList = trips.mapNotNull { trip ->
+            trip.calculatorInputs.activities?.find { it.name == activityName }?.timeSpent
+        }
+
+        return ActivityInfoResponse(
+            trips.size, activityTimeSpentList.minOf { it }, activityTimeSpentList.maxOf { it }
+        )
+    }
 }

@@ -17,7 +17,8 @@ class TriponometryExceptionHandler {
     @ExceptionHandler(
         OpenWeatherException::class,
         GoogleGeocodeApiException::class,
-        GoogleDistanceMatrixApiException::class)
+        GoogleDistanceMatrixApiException::class
+    )
     fun mapExceptionToInternalServerErrorResponse(exception: TriponometryException) =
         ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(exception.dto())
 
