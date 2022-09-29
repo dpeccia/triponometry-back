@@ -18,5 +18,5 @@ spring:
       matching-strategy: ant_path_matcher
   data:
     mongodb:
-      uri: mongodb+srv://triponometry-user:triponometry@cluster0.jrgwcxg.mongodb.net/test
+      uri: mongodb+srv://triponometry-user:triponometry@cluster0.jrgwcxg.mongodb.net/?retryWrites=true&w=majority
       database: triponometry-db
