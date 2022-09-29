@@ -18,6 +18,5 @@ spring:
       matching-strategy: ant_path_matcher
   data:
     mongodb:
-      host: localhost
-      port: 27017
+      uri: mongodb+srv://triponometry-user:triponometry@cluster0.jrgwcxg.mongodb.net/test
       database: triponometry-db
