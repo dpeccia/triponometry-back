@@ -33,7 +33,6 @@ class UserService(private val userRepository: UserRepository, private val sha512
         val jwt = JwtSigner.createJwt(user.id)
         return ResponseCookie.fromClientResponse("X-Auth", jwt)
             .maxAge(3600)
-            .httpOnly(true)
             .path("/")
             .secure(false)
             .build()
@@ -42,7 +41,6 @@ class UserService(private val userRepository: UserRepository, private val sha512
     fun logout(request: HttpServletRequest) =
         ResponseCookie.fromClientResponse("X-Auth", WebUtils.getCookie(request, "X-Auth")!!.value)
             .maxAge(0)
-            .httpOnly(true)
             .path("/")
             .secure(false)
             .build()
