@@ -35,7 +35,8 @@ class UserService(private val userRepository: UserRepository, private val sha512
             .maxAge(3600)
             .httpOnly(true)
             .path("/")
-            .secure(false)
+            .secure(true)
+            .sameSite("none")
             .build()
     }
 
