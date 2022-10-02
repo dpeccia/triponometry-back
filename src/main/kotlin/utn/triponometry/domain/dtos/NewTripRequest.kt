@@ -23,7 +23,7 @@ data class CalculatorOutputsDto(
 )
 
 data class CityDto(
-    val imageUrl: String,
+    var imageUrl: String,
     val wikiDataId : String? = null,
     val name: String,
     val region: String? = null,

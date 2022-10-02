@@ -40,7 +40,7 @@ class UserIntegrationTest {
 
     @BeforeEach
     fun setUp() {
-        user = User("example_admin", "example_admin")
+        user = User("example_admin", "example_admin","username",false)
         user.id = ObjectId()
 
         every { userRepository.findByMailAndPassword("wrong_username", sha512.getSHA512("example_password")) } returns Optional.empty<User>()
@@ -50,7 +50,7 @@ class UserIntegrationTest {
 
     @Test
     fun `login with wrong username returns UNAUTHORIZED`() {
-        val userDto = UserDto("wrong_username", "example_password")
+        val userDto = UserDto("wrong_username", "example_password","username",false)
         mvc.perform(
             MockMvcRequestBuilders
                 .post("/user/tokens")
@@ -62,7 +62,7 @@ class UserIntegrationTest {
 
     @Test
     fun `login with wrong password returns UNAUTHORIZED`() {
-        val userDto = UserDto("example_username", "wrong_password")
+        val userDto = UserDto("example_username", "wrong_password","username",false)
         mvc.perform(
             MockMvcRequestBuilders
                 .post("/user/tokens")
@@ -74,7 +74,7 @@ class UserIntegrationTest {
 
     @Test
     fun `successful login returns OK`() {
-        val userDto = UserDto("example_username", "example_password")
+        val userDto = UserDto("example_username", "example_password","username",false)
         mvc.perform(
             MockMvcRequestBuilders
                 .post("/user/tokens")
@@ -86,7 +86,7 @@ class UserIntegrationTest {
 
     @Test
     fun `successful login returns JWT cookie`() {
-        val userDto = UserDto("example_username", "example_password")
+        val userDto = UserDto("example_username", "example_password","username",false)
         val response = mvc.perform(
             MockMvcRequestBuilders
                 .post("/user/tokens")
@@ -104,7 +104,7 @@ class UserIntegrationTest {
 
     @Test
     fun `successful logout erases JWT cookie`() {
-        val userDto = UserDto("example_username", "example_password")
+        val userDto = UserDto("example_username", "example_password","username",false)
         val logInResponse = mvc.perform(
             MockMvcRequestBuilders
                 .post("/user/tokens")

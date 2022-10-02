@@ -225,4 +225,15 @@ class TripService(
             trips.size, activityTimeSpentList.minOf { it }, activityTimeSpentList.maxOf { it }
         )
     }
+
+    fun updateImage(userId: ObjectId, tripId: ObjectId, image: String): TripDto {
+        val user = userRepository.findById(userId).get()
+        val tripOptional = tripRepository.findByUserAndId(user, tripId)
+        if (tripOptional.isPresent) {
+            val trip = tripOptional.get()
+            trip.calculatorInputs.city.imageUrl = image
+            return tripRepository.save(trip).dto()
+        }
+        throw IllegalTripException("A trip under that id does not exist")
+    }
 }

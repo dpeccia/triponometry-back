@@ -1,11 +1,13 @@
 package utn.triponometry.controllers
 
 import io.swagger.annotations.ApiOperation
+import org.bson.types.ObjectId
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import utn.triponometry.domain.dtos.UserDto
+import utn.triponometry.domain.dtos.UserLogin
+import utn.triponometry.domain.dtos.UserRequest
 import utn.triponometry.services.UserService
 import javax.servlet.http.HttpServletRequest
 
@@ -14,14 +16,14 @@ import javax.servlet.http.HttpServletRequest
 class UserController(private val userService: UserService): BaseController() {
     @PostMapping
     @ApiOperation(value = "Creates a new user (Sign Up / Register)")
-    fun createUser(@RequestBody newUser: UserDto): ResponseEntity<Any> {
+    fun createUser(@RequestBody newUser: UserRequest): ResponseEntity<Any> {
         val user = userService.createUser(newUser)
         return ResponseEntity.ok(user)
     }
 
     @PostMapping("/tokens")
     @ApiOperation(value = "Log In")
-    fun login(@RequestBody userDto: UserDto): ResponseEntity<Any> {
+    fun login(@RequestBody userDto: UserLogin): ResponseEntity<Any> {
         val user = userService.checkUserCredentials(userDto)
         val authCookie = userService.login(user)
         return ResponseEntity.ok()
@@ -31,11 +33,11 @@ class UserController(private val userService: UserService): BaseController() {
     }
     @PostMapping("/gtokens")
     @ApiOperation(value = "Google Log In")
-    fun googleLogIn(@RequestBody userDto: UserDto): ResponseEntity<Any> {
+    fun googleLogIn(@RequestBody userDto: UserRequest): ResponseEntity<Any> {
         if(!userService.checkUserIsPresent(userDto)){
             createUser(userDto)
         }
-        return login(userDto)
+        return login(userDto.userLogin())
     }
 
     @DeleteMapping("/tokens")
@@ -53,4 +55,20 @@ class UserController(private val userService: UserService): BaseController() {
         val response = userService.checkUserLogin(userId)
         return ResponseEntity.ok(response)
     }
+
+    @PostMapping("/verify/{username}")
+    @ApiOperation(value = "Verify user")
+    fun verify(@PathVariable username: String): ResponseEntity<Any> {
+        val response = userService.verifyUser(username)
+        return ResponseEntity.ok(response)
+    }
+
+    @GetMapping("/{id}")
+    @ApiOperation(value = "Get User Info")
+    fun getUser(request: HttpServletRequest, @PathVariable id: String): ResponseEntity<Any> {
+        checkAndGetUserId(request)
+        val response = userService.getUser(ObjectId(id))
+        return ResponseEntity.ok(response)
+    }
+
 }

@@ -6,11 +6,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import utn.triponometry.domain.CalculatorInputs
-import utn.triponometry.domain.dtos.ActivityRequest
-import utn.triponometry.domain.dtos.NewTripRequest
-import utn.triponometry.domain.dtos.ReviewRequest
-import utn.triponometry.domain.dtos.TripStatusDto
-import utn.triponometry.domain.dtos.TripUpdateDto
+import utn.triponometry.domain.dtos.*
 import utn.triponometry.services.TripService
 import javax.servlet.http.HttpServletRequest
 
@@ -115,4 +111,13 @@ class TripController(private val tripService: TripService): BaseController() {
         val response = tripService.getActivityInfo(activity.cityName, activity.activityName)
         return ResponseEntity.ok(response)
     }
+
+    @PostMapping("/image")
+    fun updateImage(request: HttpServletRequest,  @RequestBody imageReq: ImageRequest): ResponseEntity<Any> {
+        val userId = checkAndGetUserId(request)
+        val tripId = ObjectId(imageReq.id)
+        val response = tripService.updateImage(userId,tripId, imageReq.image)
+        return ResponseEntity.ok(response)
+    }
+
 }

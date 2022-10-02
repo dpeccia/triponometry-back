@@ -11,4 +11,5 @@ interface UserRepository : MongoRepository<User, String> {
     fun findById(id: ObjectId): Optional<User>
     fun findByMail(mail: String): Optional<User>
     fun findByMailAndPassword(mail: String, password: String): Optional<User>
+    fun findByUsername(username: String): Optional<User>
 }
