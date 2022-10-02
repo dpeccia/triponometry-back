@@ -85,7 +85,7 @@ class TripServiceTest {
         val file = File("src/test/resources/request_new_trip.json")
         val fileContent = file.readText()
         val request = Gson().fromJson(fileContent, NewTripRequest::class.java)
-        val user = User("mail@gmail.com","password")
+        val user = User("mail@gmail.com","password","username",false)
 
         every { tripRepository.findByUserAndName(any(),any()) } returns Optional.empty()
         every { userRepository.findById(ObjectId("666f6f2d6261722d71757578")) } returns Optional.of(user)
@@ -101,7 +101,7 @@ class TripServiceTest {
         val file = File("src/test/resources/request_new_trip.json")
         val fileContent = file.readText()
         val request = Gson().fromJson(fileContent, NewTripRequest::class.java)
-        val user = User("mail@gmail.com","password")
+        val user = User("mail@gmail.com","password","username",false)
         val trip = Trip("Francia",request.calculatorInputs,user,TripStatus.ACTIVE,request.calculatorOutputs)
 
         every { tripRepository.findByUserAndName(any(),any()) } returns Optional.of(trip)
@@ -117,7 +117,7 @@ class TripServiceTest {
         val file = File("src/test/resources/request_new_trip.json")
         val fileContent = file.readText()
         val request = Gson().fromJson(fileContent, NewTripRequest::class.java)
-        val user = User("mail@gmail.com","password")
+        val user = User("mail@gmail.com","password","username",false)
         val trip = Trip("Francia",request.calculatorInputs,user,TripStatus.ACTIVE,request.calculatorOutputs)
 
         every { tripRepository.findByUserAndId(any(),any()) } returns Optional.of(trip)
@@ -135,7 +135,7 @@ class TripServiceTest {
         val file = File("src/test/resources/request_new_trip.json")
         val fileContent = file.readText()
         val request = Gson().fromJson(fileContent, NewTripRequest::class.java)
-        val user = User("mail@gmail.com","password")
+        val user = User("mail@gmail.com","password","username",false)
         val trip = Trip("Francia",request.calculatorInputs,user,TripStatus.ACTIVE,request.calculatorOutputs)
 
         every { tripRepository.findByUserAndId(any(),any()) } returns Optional.empty()
@@ -175,7 +175,7 @@ class TripServiceTest {
         val file = File("src/test/resources/request_new_trip.json")
         val fileContent = file.readText()
         val request = Gson().fromJson(fileContent, NewTripRequest::class.java)
-        val user = User("mail@gmail.com","password")
+        val user = User("mail@gmail.com","password","username",false)
         val trip = Trip("Francia",request.calculatorInputs,user,TripStatus.ACTIVE,request.calculatorOutputs)
 
         assertTrue(trip.isComplete())
@@ -192,7 +192,7 @@ class TripServiceTest {
         val file = File("src/test/resources/request_new_draft.json")
         val fileContent = file.readText()
         val request = Gson().fromJson(fileContent, NewTripRequest::class.java)
-        val user = User("mail@gmail.com","password")
+        val user = User("mail@gmail.com","password","username",false)
 
         every { tripRepository.findByUserAndName(any(),any()) } returns Optional.empty()
         every { userRepository.findById(ObjectId("666f6f2d6261722d71757578")) } returns Optional.of(user)
@@ -210,7 +210,7 @@ class TripServiceTest {
         val fileContent = file.readText()
         val request = Gson().fromJson(fileContent, NewTripRequest::class.java)
         request.name = "Francia - Paris"
-        val user = User("mail@gmail.com","password")
+        val user = User("mail@gmail.com","password","username",false)
         val trip = Trip("Francia",request.calculatorInputs,user,TripStatus.DRAFT)
 
         every { tripRepository.findByUserAndId(any(),any()) } returns Optional.of(trip)
@@ -229,7 +229,7 @@ class TripServiceTest {
         val file = File("src/test/resources/request_new_draft.json")
         val fileContent = file.readText()
         val request = Gson().fromJson(fileContent, NewTripRequest::class.java)
-        val user = User("mail@gmail.com","password")
+        val user = User("mail@gmail.com","password","username",false)
 
         every { userRepository.findById(ObjectId("666f6f2d6261722d71757578")) } returns Optional.of(user)
         every { tripRepository.findByUserAndId(any(),any()) } returns Optional.empty()
@@ -245,7 +245,7 @@ class TripServiceTest {
         val file = File("src/test/resources/request_new_trip.json")
         val fileContent = file.readText()
         val request = Gson().fromJson(fileContent, NewTripRequest::class.java)
-        val user = User("mail@gmail.com","password")
+        val user = User("mail@gmail.com","password","username",false)
         val trip = Trip("Francia",request.calculatorInputs,user,TripStatus.ACTIVE,request.calculatorOutputs)
 
         val userId = ObjectId("6312585af244650fd3c36762")
@@ -265,7 +265,7 @@ class TripServiceTest {
 
     @Test
     fun `A review is not added because trip doesn't exist`() {
-        val user = User("mail@gmail.com","password")
+        val user = User("mail@gmail.com","password","username",false)
 
         val userId = ObjectId("6312585af244650fd3c36762")
         val tripId = ObjectId("631258770e6cb8702cb599b4")

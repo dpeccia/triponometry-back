@@ -16,9 +16,9 @@ import org.springframework.http.ResponseCookie
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
-import utn.triponometry.domain.User
 import utn.triponometry.domain.dtos.UserDto
 import utn.triponometry.domain.dtos.UserDtoWithoutSensitiveInformation
+import utn.triponometry.domain.dtos.UserRequest
 import utn.triponometry.helpers.BadLoginException
 import utn.triponometry.helpers.IllegalUserException
 import utn.triponometry.helpers.TokenException
@@ -39,18 +39,18 @@ class UserControllerTest {
     @Autowired
     lateinit var objectMapper: ObjectMapper
 
-    val userDto = UserDto("test@gmail.com", "1234")
+    val userRequest = UserRequest("test@gmail.com", "1234","test")
 
     @Test
     fun `sign-up endpoint returns ok`() {
-        every { userService.createUser(any()) } returns UserDtoWithoutSensitiveInformation("1", userDto.mail)
+        every { userService.createUser(any()) } returns UserDtoWithoutSensitiveInformation("1", userRequest.mail, userRequest.username,false)
 
         val responseAsString = mvc.perform(
             MockMvcRequestBuilders
                 .post("/user")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(userDto))
+                .content(objectMapper.writeValueAsString(userRequest))
         ).andExpect(MockMvcResultMatchers.status().`is`(200)).andReturn().response.contentAsString
 
         val user = objectMapper.readValue<UserDtoWithoutSensitiveInformation>(responseAsString)
@@ -68,7 +68,7 @@ class UserControllerTest {
                 .post("/user")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(userDto))
+                .content(objectMapper.writeValueAsString(userRequest))
         ).andExpect(MockMvcResultMatchers.status().`is`(400)).andReturn().response.contentAsString
 
         val error = objectMapper.readValue<Map<String, String>>(responseAsString)
@@ -78,7 +78,7 @@ class UserControllerTest {
 
     @Test
     fun `login endpoint returns ok`() {
-        val user = UserDtoWithoutSensitiveInformation("1", userDto.mail)
+        val user = UserDtoWithoutSensitiveInformation("1", userRequest.mail,userRequest.username,false)
         every { userService.checkUserCredentials(any()) } returns user
         every { userService.login(user) } returns ResponseCookie.from("X-Auth", "").build()
 
@@ -87,7 +87,7 @@ class UserControllerTest {
                 .post("/user/tokens")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(userDto))
+                .content(objectMapper.writeValueAsString(userRequest))
         ).andExpect(MockMvcResultMatchers.status().`is`(200))
     }
 
@@ -100,7 +100,7 @@ class UserControllerTest {
                 .post("/user/tokens")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(userDto))
+                .content(objectMapper.writeValueAsString(userRequest))
         ).andExpect(MockMvcResultMatchers.status().`is`(401)).andReturn().response.contentAsString
 
         val error = objectMapper.readValue<Map<String, String>>(responseAsString)

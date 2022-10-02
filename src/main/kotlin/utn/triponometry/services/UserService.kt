@@ -1,5 +1,6 @@
 package utn.triponometry.services
 
+import jdk.jshell.spi.ExecutionControl
 import org.bson.types.ObjectId
 import org.springframework.http.ResponseCookie
 import org.springframework.http.ResponseEntity
@@ -8,20 +9,22 @@ import org.springframework.web.util.WebUtils
 import utn.triponometry.domain.User
 import utn.triponometry.domain.dtos.UserDto
 import utn.triponometry.domain.dtos.UserDtoWithoutSensitiveInformation
-import utn.triponometry.helpers.BadLoginException
-import utn.triponometry.helpers.IllegalUserException
-import utn.triponometry.helpers.JwtSigner
-import utn.triponometry.helpers.Sha512Hash
+import utn.triponometry.domain.dtos.UserLogin
+import utn.triponometry.domain.dtos.UserRequest
+import utn.triponometry.domain.external.dtos.TripDto
+import utn.triponometry.helpers.*
 import utn.triponometry.repos.UserRepository
 import javax.servlet.http.HttpServletRequest
 
 @Service
 class UserService(private val userRepository: UserRepository, private val sha512: Sha512Hash) {
-    fun createUser(newUser: UserDto): UserDtoWithoutSensitiveInformation {
+    fun createUser(newUser: UserRequest): UserDtoWithoutSensitiveInformation {
         if (userRepository.findByMail(newUser.mail).isPresent)
-            throw IllegalUserException("There is already an user under that email")
+            throw IllegalUserException("El email ya se encuentra registrado")
+        if (userRepository.findByUsername(newUser.username).isPresent)
+            throw IllegalUserException("Ya existe un usuario con ese username. Por favor, elegí uno nuevo")
 
-        val user = User(newUser.mail, sha512.getSHA512(newUser.password))
+        val user = User(newUser.mail, sha512.getSHA512(newUser.password), newUser.username, false)
 
         return userRepository.save(user).dto()
     }
@@ -47,10 +50,26 @@ class UserService(private val userRepository: UserRepository, private val sha512
             .secure(false)
             .build()
 
-    fun checkUserIsPresent(newUser: UserDto): Boolean =
+    fun checkUserIsPresent(newUser: UserRequest): Boolean =
         userRepository.findByMail(newUser.mail).isPresent
 
-    fun checkUserCredentials(userDto: UserDto) =
+    fun checkUserCredentials(userDto: UserLogin) =
         userRepository.findByMailAndPassword(userDto.mail, sha512.getSHA512(userDto.password))
             .orElseThrow { BadLoginException("Wrong username or password") }.dto()
+
+    fun verifyUser(username: String): UserDtoWithoutSensitiveInformation {
+        val userOptional = userRepository.findByUsername(username)
+        if (userOptional.isPresent){
+            val user = userOptional.get()
+            user.verified = true
+            return userRepository.save(user).dto()
+        }
+            throw IllegalUserException("User under that username does not exist")
+
+    }
+
+    fun getUser(id: ObjectId): UserDtoWithoutSensitiveInformation =
+        userRepository.findById(id) .orElseThrow { IllegalUserException("Wrong user ID") }.dto()
+
 }
+
