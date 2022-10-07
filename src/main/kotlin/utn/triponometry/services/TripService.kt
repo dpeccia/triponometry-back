@@ -103,7 +103,7 @@ class TripService(
     fun createNewTrip(newTripRequest: NewTripRequest, userId: ObjectId): TripDto {
         val user = userRepository.findById(userId).get()
         if (tripRepository.findByUserAndName(user, newTripRequest.name).isPresent) {
-            throw IllegalTripException("There is already a trip under that name")
+            throw IllegalTripException("Ya existe un viaje con el nombre: ${newTripRequest.name}")
         }
         val trip = Trip(
             newTripRequest.name,
@@ -118,7 +118,7 @@ class TripService(
     fun createNewDraft(newTripRequest: NewTripRequest, userId: ObjectId): TripDto {
         val user = userRepository.findById(userId).get()
         if (tripRepository.findByUserAndName(user, newTripRequest.name).isPresent) {
-            throw IllegalTripException("There is already a trip under that name")
+            throw IllegalTripException("Ya existe un viaje con el nombre: ${newTripRequest.name}")
         }
         val trip = Trip(newTripRequest.name, newTripRequest.calculatorInputs, user, TripStatus.DRAFT)
         return tripRepository.save(trip).dto()
@@ -147,7 +147,7 @@ class TripService(
             trip.status = newStatus
             return tripRepository.save(trip).dto()
         }
-        throw IllegalTripException("A trip under that id does not exist")
+        throw IllegalTripException("El viaje al cuál querés actualizar no existe")
     }
 
     fun getTrip(userId: ObjectId, tripId: ObjectId): TripDto {
@@ -158,7 +158,7 @@ class TripService(
             val trip = tripOptional.get()
             return trip.dto()
         }
-        throw IllegalTripException("A trip under that id does not exist")
+        throw IllegalTripException("El viaje que querés ver no existe")
     }
 
     fun updateTrip(userId: ObjectId, draftId: ObjectId, newDraft: NewTripRequest): TripDto {
@@ -177,7 +177,7 @@ class TripService(
 
             return tripRepository.save(trip).dto()
         }
-        throw IllegalTripException("A trip under that id does not exist")
+        throw IllegalTripException("El viaje al cuál querés actualizar no existe")
     }
 
     fun shareTrip(tripId: ObjectId): TripDto {
@@ -192,7 +192,7 @@ class TripService(
             val trip = tripOptional.get()
 
             if(trip.reviews.any { r -> r.fromUser(userId) }){
-                throw IllegalTripException("User has already reviewed this trip")
+                throw IllegalTripException("Ya opinaste sobre este viaje")
             }
 
             val review = Review(ObjectId(),user,reviewRequest.stars,reviewRequest.done,reviewRequest.description)
@@ -201,14 +201,14 @@ class TripService(
             tripRepository.save(trip).dto()
             return review.dto()
         }
-        throw IllegalTripException("A trip under that id does not exist")
+        throw IllegalTripException("El viaje al cuál querés opinar no existe")
     }
 
     fun deleteDraft(userId: ObjectId, tripId: ObjectId){
         val user = userRepository.findById(userId).get()
         val trip = tripRepository.findByUserAndId(user,tripId).get()
         if( trip.status != TripStatus.DRAFT) {
-            throw IllegalTripException("Cannot delete a trip without Draft status")
+            throw IllegalTripException("No es posible eliminar viajes que no sean borradores")
         }
         return tripRepository.delete(trip)
     }
@@ -234,6 +234,6 @@ class TripService(
             trip.calculatorInputs.city.imageUrl = image
             return tripRepository.save(trip).dto()
         }
-        throw IllegalTripException("A trip under that id does not exist")
+        throw IllegalTripException("El viaje al cuál le querés cambiar la imagen no existe")
     }
 }

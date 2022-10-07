@@ -4,9 +4,11 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
+import utn.triponometry.helpers.AmazonException
 import utn.triponometry.helpers.BadLoginException
 import utn.triponometry.helpers.GoogleDistanceMatrixApiException
 import utn.triponometry.helpers.GoogleGeocodeApiException
+import utn.triponometry.helpers.IllegalTripException
 import utn.triponometry.helpers.IllegalUserException
 import utn.triponometry.helpers.OpenWeatherException
 import utn.triponometry.helpers.TokenException
@@ -17,13 +19,15 @@ class TriponometryExceptionHandler {
     @ExceptionHandler(
         OpenWeatherException::class,
         GoogleGeocodeApiException::class,
-        GoogleDistanceMatrixApiException::class
+        GoogleDistanceMatrixApiException::class,
+        AmazonException::class
     )
     fun mapExceptionToInternalServerErrorResponse(exception: TriponometryException) =
         ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(exception.dto())
 
     @ExceptionHandler(
-        IllegalUserException::class
+        IllegalUserException::class,
+        IllegalTripException::class
     )
     fun mapExceptionToBadRequestResponse(exception: TriponometryException) =
         ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.dto())

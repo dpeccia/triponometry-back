@@ -77,11 +77,10 @@ class GoogleApi (triponometryProperties: TriponometryProperties) {
             .uri("$endpoint&key=$apiKey")
             .retrieve()
             .onStatus(HttpStatus::isError) {
-                val statusCode = it.statusCode()
-                throw GoogleDistanceMatrixApiException("${statusCode.value()} - ${statusCode.reasonPhrase}")
+                throw GoogleDistanceMatrixApiException("Ocurrió un error al intentar generar el recorrido óptimo")
             }
             .bodyToMono(String::class.java)
-            .block() ?: throw GoogleDistanceMatrixApiException("There was an error with the Distance Matrix Server")
+            .block() ?: throw GoogleDistanceMatrixApiException("Ocurrió un error al intentar generar el recorrido óptimo")
 
     fun getDirectionsApi(coordinatesO: Coordinates, coordinatesD: MutableList<Coordinates?>, travelMode: TravelMode): DirectionsResult? {
         try {
@@ -102,7 +101,7 @@ class GoogleApi (triponometryProperties: TriponometryProperties) {
             return results
 
         } catch (e: Exception) {
-            throw GoogleGeocodeApiException("There was an error with the Directions Server")
+            throw GoogleGeocodeApiException("Ocurrió un error al crear el mapa")
         }
     }
 }

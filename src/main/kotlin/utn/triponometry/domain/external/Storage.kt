@@ -28,7 +28,7 @@ class Storage(triponometryProperties: TriponometryProperties) {
             .retrieve()
             .onStatus(HttpStatus::isError) {
                 val statusCode = it.statusCode()
-                throw AmazonException("${statusCode.value()} - ${statusCode.reasonPhrase}")
+                throw AmazonException("Ocurrió un error al crear el mapa")
             }
             .bodyToMono(String::class.java)
             .block()
@@ -40,7 +40,7 @@ class Storage(triponometryProperties: TriponometryProperties) {
             .retrieve()
             .onStatus(HttpStatus::isError) {
                 val statusCode = it.statusCode()
-                throw AmazonException("${statusCode.value()} - ${statusCode.reasonPhrase}")
+                throw AmazonException("Ocurrió un error al cargar el mapa")
             }
             .bodyToMono(String::class.java)
             .block()

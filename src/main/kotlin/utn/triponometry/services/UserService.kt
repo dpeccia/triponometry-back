@@ -20,9 +20,9 @@ import javax.servlet.http.HttpServletRequest
 class UserService(private val userRepository: UserRepository, private val sha512: Sha512Hash) {
     fun createUser(newUser: UserRequest): UserDtoWithoutSensitiveInformation {
         if (userRepository.findByMail(newUser.mail).isPresent)
-            throw IllegalUserException("El email ya se encuentra registrado")
+            throw IllegalUserException("Ya existe un usuario registrado con ese mail")
         if (userRepository.findByUsername(newUser.username).isPresent)
-            throw IllegalUserException("Ya existe un usuario con ese username. Por favor, elegí uno nuevo")
+            throw IllegalUserException("Ya existe un usuario llamado ${newUser.username}. Por favor, elegí uno nuevo")
 
         val user = User(newUser.mail, sha512.getSHA512(newUser.password), newUser.username, false)
 
@@ -55,7 +55,7 @@ class UserService(private val userRepository: UserRepository, private val sha512
 
     fun checkUserCredentials(userDto: UserLogin) =
         userRepository.findByMailAndPassword(userDto.mail, sha512.getSHA512(userDto.password))
-            .orElseThrow { BadLoginException("Wrong username or password") }.dto()
+            .orElseThrow { BadLoginException("Usuario y/o contraseña inválida") }.dto()
 
     fun verifyUser(username: String): UserDtoWithoutSensitiveInformation {
         val userOptional = userRepository.findByUsername(username)
@@ -64,12 +64,11 @@ class UserService(private val userRepository: UserRepository, private val sha512
             user.verified = true
             return userRepository.save(user).dto()
         }
-            throw IllegalUserException("User under that username does not exist")
-
+        throw IllegalUserException("No existe el usuario: $username")
     }
 
     fun getUser(id: ObjectId): UserDtoWithoutSensitiveInformation =
-        userRepository.findById(id) .orElseThrow { IllegalUserException("Wrong user ID") }.dto()
+        userRepository.findById(id).orElseThrow { IllegalUserException("El usuario no existe") }.dto()
 
 }
 
