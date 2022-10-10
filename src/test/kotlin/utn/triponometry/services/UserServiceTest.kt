@@ -13,13 +13,15 @@ import utn.triponometry.helpers.IllegalUserException
 import utn.triponometry.helpers.Sha512Hash
 import utn.triponometry.properties.Hash
 import utn.triponometry.properties.TriponometryProperties
+import utn.triponometry.repos.CodeRepository
 import utn.triponometry.repos.UserRepository
 import java.util.*
 
 class UserServiceTest {
     val userRepository: UserRepository = mockk()
+    val codeRepository: CodeRepository = mockk()
     val sha512 = Sha512Hash(TriponometryProperties(hash = Hash("231223423423")))
-    val userService = UserService(userRepository, sha512)
+    val userService = UserService(userRepository, sha512,codeRepository)
 
     @Test
     fun `user is created successfully`() {
@@ -28,7 +30,7 @@ class UserServiceTest {
         every { userRepository.save(any()) } answers { firstArg() }
 
         val userDto = UserRequest("test@gmail.com", "1234","username")
-        val newUser = userService.createUser(userDto)
+        val newUser = userService.createUser(userDto,false)
 
         assertNotNull(newUser.id)
         assertEquals("test@gmail.com", newUser.mail)
@@ -36,10 +38,10 @@ class UserServiceTest {
 
     @Test
     fun `user is not created if it already exists`() {
-        every { userRepository.findByMail(any()) } answers { Optional.of(User(firstArg(), "23134","username",false)) }
+        every { userRepository.findByMail(any()) } answers { Optional.of(User(firstArg(), "23134","username",false,false)) }
         val userDto = UserRequest("test@gmail.com", "1234","username")
 
-        val exception = assertThrows<IllegalUserException> { userService.createUser(userDto) }
+        val exception = assertThrows<IllegalUserException> { userService.createUser(userDto,false) }
         assertEquals("There is already an user under that email", exception.message)
     }
 }
