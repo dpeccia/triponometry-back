@@ -43,7 +43,7 @@ class UserControllerTest {
 
     @Test
     fun `sign-up endpoint returns ok`() {
-        every { userService.createUser(any()) } returns UserDtoWithoutSensitiveInformation("1", userRequest.mail, userRequest.username,false)
+        every { userService.createUser(any(),any()) } returns UserDtoWithoutSensitiveInformation("1", userRequest.mail, userRequest.username,false,false)
 
         val responseAsString = mvc.perform(
             MockMvcRequestBuilders
@@ -61,7 +61,7 @@ class UserControllerTest {
 
     @Test
     fun `sign-up endpoint returns an error`() {
-        every { userService.createUser(any()) } throws IllegalUserException("There is already an user under that email")
+        every { userService.createUser(any(),any()) } throws IllegalUserException("There is already an user under that email")
 
         val responseAsString = mvc.perform(
             MockMvcRequestBuilders
@@ -78,7 +78,7 @@ class UserControllerTest {
 
     @Test
     fun `login endpoint returns ok`() {
-        val user = UserDtoWithoutSensitiveInformation("1", userRequest.mail,userRequest.username,false)
+        val user = UserDtoWithoutSensitiveInformation("1", userRequest.mail,userRequest.username,false,false)
         every { userService.checkUserCredentials(any()) } returns user
         every { userService.login(user) } returns ResponseCookie.from("X-Auth", "").build()
 

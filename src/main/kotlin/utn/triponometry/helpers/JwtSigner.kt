@@ -28,7 +28,7 @@ object JwtSigner {
                 .build()
                 .parseClaimsJws(jwt)
         } catch (e: Exception) {
-            throw TokenException("Token not found or expired. Login again")
+            throw TokenException("Tu sesión expiró. Iniciá sesión nuevamente")
         }
     }
 }

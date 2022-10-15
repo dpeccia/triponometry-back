@@ -36,6 +36,8 @@ dependencies {
 	testImplementation("com.ninja-squad:springmockk:3.0.1")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.1")
 	implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.13.1")
+	implementation("org.springframework.boot:spring-boot-starter-mail")
+	implementation("org.springframework.boot:spring-boot-starter-web")
 }
 
 tasks.withType<KotlinCompile> {
