@@ -42,7 +42,7 @@ class UserService(
             .httpOnly(true)
             .path("/")
             .secure(false)
-            .sameSite("none")
+            .sameSite("Lax")
             .build()
     }
 
