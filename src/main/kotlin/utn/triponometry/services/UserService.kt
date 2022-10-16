@@ -41,7 +41,7 @@ class UserService(
             .maxAge(3600)
             .httpOnly(true)
             .path("/")
-            .secure(true)
+            .secure(false)
             .sameSite("none")
             .build()
     }
