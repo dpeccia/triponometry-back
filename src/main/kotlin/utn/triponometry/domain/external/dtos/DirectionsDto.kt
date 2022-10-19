@@ -22,42 +22,46 @@ data class IconStyle (
     var scale: Int = 0,
     @JacksonXmlProperty(localName = "Icon")
     var icon: Icon,
-    var hotSpot: hotSpot
+    var hotSpot: hotSpot? = null
 )
 
 data class LabelStyle (
-      var scale: Int = 0
+    var scale: Int = 0
 )
 
 data class BalloonStyle (
     @JacksonXmlCData
-        val text: String = "<h3>$[name]</h3>"
+    val text: String = "<h3>$[name]</h3>"
 )
 
 data class Style (
     @JacksonXmlProperty(isAttribute = true)
     var id: String? = null,
+    @JacksonXmlProperty(localName = "IconStyle")
+    var iconStyle: IconStyle? = null,
+    @JacksonXmlProperty(localName = "LabelStyle")
+    var labelStyle: LabelStyle? = null,
     @JacksonXmlProperty(localName = "BalloonStyle")
-      var balloonStyle: BalloonStyle? = null,
+    var balloonStyle: BalloonStyle? = null,
     @JacksonXmlProperty(localName = "LineStyle")
-      var lineStyle: LineStyle?  = null
+    var lineStyle: LineStyle? = null
 )
 
 data class PairDto (
-      var key: String  ,
-      var styleUrl: String
+    var key: String,
+    var styleUrl: String
 )
 
 data class StyleMap (
     @JacksonXmlProperty(isAttribute = true)
     var id: String,
     @JacksonXmlProperty(localName = "Pair")
-      var pair: MutableList<PairDto>,
+    var pair: MutableList<PairDto>,
 )
 
 data class LineStyle(
     var color: String,
-    var width: Int
+    var width: Double
 )
 
 data class PointDto (

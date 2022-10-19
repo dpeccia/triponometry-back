@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service
 import utn.triponometry.domain.*
 import utn.triponometry.domain.dtos.*
 import utn.triponometry.domain.external.CalendarAdapter
-import utn.triponometry.domain.external.Directions
+import utn.triponometry.domain.external.MapCreator
 import utn.triponometry.domain.external.GoogleApi
 import utn.triponometry.domain.external.Storage
 import utn.triponometry.domain.external.dtos.AgendaRequest
@@ -98,7 +98,7 @@ class TripService(
     }
 
     fun getMapFileData(locations: List<Day>, travelMode: TravelMode): String =
-        Directions(triponometryProperties, googleApi).createKMLFile(locations, travelMode)
+        MapCreator(googleApi).createKMLFile(locations, travelMode)
 
     fun createNewTrip(newTripRequest: NewTripRequest, userId: ObjectId): TripDto {
         val user = userRepository.findById(userId).get()
