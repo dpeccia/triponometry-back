@@ -1,5 +1,6 @@
 package utn.triponometry.domain.external
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.google.gson.Gson
 import com.google.maps.DirectionsApi
@@ -17,6 +18,7 @@ import utn.triponometry.domain.Coordinates
 import utn.triponometry.domain.Place
 import utn.triponometry.domain.PlaceInput
 import utn.triponometry.domain.external.dtos.DistanceMatrixResponseDto
+import utn.triponometry.domain.external.dtos.StatusDto
 import utn.triponometry.helpers.GoogleDistanceMatrixApiException
 import utn.triponometry.helpers.GoogleGeocodeApiException
 import utn.triponometry.properties.TriponometryProperties
@@ -24,7 +26,7 @@ import java.util.*
 
 @Component
 @EnableAutoConfiguration
-class GoogleApi (triponometryProperties: TriponometryProperties) {
+class GoogleApi(triponometryProperties: TriponometryProperties) {
     val apiKey = triponometryProperties.google.apiKey
     val baseUrl = triponometryProperties.distance.url
     var matrixAdapter = DistanceMatrixAdapter()
@@ -63,8 +65,22 @@ class GoogleApi (triponometryProperties: TriponometryProperties) {
         val orArray = matrixAdapter.mapArrayToString(coordinates)
         val desArray = matrixAdapter.mapArrayToString(coordinates)
         val results = getMatrix(baseUrl, orArray, desArray, travelMode)
-        return jacksonObjectMapper().readerFor(DistanceMatrixResponseDto::class.java).readValue(results)
+
+            val mapper = jacksonObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
+            val response: DistanceMatrixResponseDto =
+                mapper.readerFor(DistanceMatrixResponseDto::class.java).readValue(results)
+
+            when (response.status) {
+                "OK" -> return response
+                "INVALID_REQUEST" -> throw GoogleDistanceMatrixApiException("No se pudo generar el recorrido óptimo: no se puede localizar el destino")
+                "MAX_ELEMENTS_EXCEEDED" -> throw GoogleDistanceMatrixApiException("No se pudo generar el recorrido óptimo: se superó el maximo de localidades")
+                "MAX_DIMENSIONS_EXCEEDED" -> throw GoogleDistanceMatrixApiException("No se pudo generar el recorrido óptimo: se superó el maximo de localidades")
+                //Hay 3 casos que son pertenecientes a Google API, los englobo dentro del else pero sino puedo separar cada caso
+                else -> throw GoogleDistanceMatrixApiException("No se pudo generar el recorrido óptimo: problema con Google Api")
+            }
+
     }
+
 
     fun getMatrix(baseUrl: String, origins: String, destinations: String, mode: TravelMode): String {
         val travelMode = mode.name.lowercase(Locale.getDefault())
@@ -72,7 +88,7 @@ class GoogleApi (triponometryProperties: TriponometryProperties) {
         return getFromDistanceMatrixApi(baseUrl, endpoint)
     }
 
-   private fun getFromDistanceMatrixApi(baseUrl: String, endpoint: String) =
+    private fun getFromDistanceMatrixApi(baseUrl: String, endpoint: String) =
         WebClient.create(baseUrl).get()
             .uri("$endpoint&key=$apiKey")
             .retrieve()
@@ -80,9 +96,14 @@ class GoogleApi (triponometryProperties: TriponometryProperties) {
                 throw GoogleDistanceMatrixApiException("Ocurrió un error al intentar generar el recorrido óptimo")
             }
             .bodyToMono(String::class.java)
-            .block() ?: throw GoogleDistanceMatrixApiException("Ocurrió un error al intentar generar el recorrido óptimo")
+            .block()
+            ?: throw GoogleDistanceMatrixApiException("Ocurrió un error al intentar generar el recorrido óptimo")
 
-    fun getDirectionsApi(coordinatesO: Coordinates, coordinatesD: MutableList<Coordinates?>, travelMode: TravelMode): DirectionsResult? {
+    fun getDirectionsApi(
+        coordinatesO: Coordinates,
+        coordinatesD: MutableList<Coordinates?>,
+        travelMode: TravelMode
+    ): DirectionsResult? {
         try {
             val context = buildContext()
             val directionsApiRequest = DirectionsApiRequest(context)
@@ -90,7 +111,7 @@ class GoogleApi (triponometryProperties: TriponometryProperties) {
             directionsApiRequest.destination("${coordinatesO.latitude},${coordinatesO.longitude}")
 
             var waypoints = ""
-            coordinatesD.forEach { s -> waypoints += "${s?.latitude},${s?.longitude}|"}
+            coordinatesD.forEach { s -> waypoints += "${s?.latitude},${s?.longitude}|" }
             waypoints.dropLast(1)
             directionsApiRequest.waypoints(waypoints)
 
