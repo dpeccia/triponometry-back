@@ -111,8 +111,8 @@ class CalendarAdapter() {
         val tz = timezone.vTimeZone
         val startTime = eventTrip.start
         val endTime = eventTrip.end
-        val start = createDateTime(startTime.day, startTime.month, startTime.year, startTime.hour+3, startTime.minute)
-        val end = createDateTime(endTime.day, endTime.month, endTime.year, endTime.hour+3, endTime.minute)
+        val start = createDateTime(startTime.day, startTime.month, startTime.year, startTime.hour, startTime.minute)
+        val end = createDateTime(endTime.day, endTime.month, endTime.year, endTime.hour, endTime.minute)
         val event = VEvent(start, end, eventTrip.name)
         event.properties.add(tz.timeZoneId)
         return event
