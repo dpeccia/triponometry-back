@@ -1,5 +1,6 @@
 package utn.triponometry.services
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.google.gson.Gson
 import com.google.maps.model.TravelMode
 import io.mockk.every
@@ -12,6 +13,7 @@ import utn.triponometry.domain.*
 import utn.triponometry.domain.dtos.NewTripRequest
 import utn.triponometry.domain.dtos.Review
 import utn.triponometry.domain.dtos.ReviewRequest
+import utn.triponometry.domain.external.CalendarAdapter
 import utn.triponometry.domain.external.GoogleApi
 import utn.triponometry.domain.genetic_algorithm.Individual
 import utn.triponometry.helpers.IllegalTripException
@@ -109,7 +111,7 @@ class TripServiceTest {
         every { tripRepository.save(any()) } answers { firstArg() }
         
         val exception = assertThrows<IllegalTripException> { tripService.createNewTrip(request, ObjectId("666f6f2d6261722d71757578")) }
-        assertEquals("There is already a trip under that name", exception.message)
+        assertEquals("Ya existe un viaje con el nombre: Francia", exception.message)
     }
 
     @Test
@@ -144,7 +146,7 @@ class TripServiceTest {
         val exception = assertThrows<IllegalTripException> {
             tripService.updateTripStatus(ObjectId("666f6f2d6261722d71757578"),ObjectId("666f6f2d6261722d71757578"),TripStatus.DRAFT)
         }
-        assertEquals("A trip under that id does not exist", exception.message)
+        assertEquals("El viaje al cuál querés actualizar no existe", exception.message)
 
     }
 
@@ -237,7 +239,7 @@ class TripServiceTest {
         val exception = assertThrows<IllegalTripException> {
             tripService.updateTrip(ObjectId("666f6f2d6261722d71757578"),ObjectId("666f6f2d6261722d71757578"),request)
         }
-        assertEquals("A trip under that id does not exist", exception.message)
+        assertEquals("El viaje al cuál querés actualizar no existe", exception.message)
     }
 
     @Test
@@ -278,7 +280,52 @@ class TripServiceTest {
         val exception = assertThrows<IllegalTripException> {
             tripService.addReview(userId, tripId,reviewRequest)
         }
-        assertEquals("A trip under that id does not exist", exception.message)
+        assertEquals("El viaje al cuál querés opinar no existe", exception.message)
     }
+
+
+    @Test
+    fun `tokio`() {
+        val request =
+            "{\"places\":[{\"name\":\"Shinjuku Prince Hotel\",\"coordinates\":{\"latitude\":35.694744,\"longitude\":139.70012},\"timeSpent\":null},{\"name\":\"NTT InterCommunication Center\",\"coordinates\":{\"latitude\":35.6829,\"longitude\":139.6874},\"timeSpent\":180},{\"name\":\"Tokyo Toy Museum\",\"coordinates\":{\"latitude\":35.689777,\"longitude\":139.71797},\"timeSpent\":120},{\"name\":\"Hachiko Square\",\"coordinates\":{\"latitude\":35.659145,\"longitude\":139.70074},\"timeSpent\":480},{\"name\":\"Hachiko Memorial Statue\",\"coordinates\":{\"latitude\":35.65907,\"longitude\":139.70068},\"timeSpent\":120}],\"travelMode\":\"BICYCLING\",\"time\":{\"startHour\":\"08:00\",\"finishHour\":\"22:00\",\"breakfast\":\"30\",\"lunch\":\"45\",\"snack\":0,\"dinner\":60,\"freeDays\":\"0\"}}"
+        val calculatorInputs: CalculatorInputs =
+            jacksonObjectMapper().readerFor(CalculatorInputs::class.java).readValue(request)
+
+        val route = mutableListOf<Place>(
+            Place(0, "Shinjuku Prince Hotel", mapOf(1 to 11, 2 to 9, 3 to 19, 4 to 19), 0, Coordinates(35.694744, 139.70012)),
+            Place(2, "Tokyo Toy Museum", mapOf(0 to 9, 1 to 16, 3 to 18, 4 to 18), 120, coordinates=Coordinates(latitude=35.689777, longitude=139.71797)),
+            Place(3, "Hachiko Square", mapOf(0 to 20, 1 to 17, 2 to 19, 4 to 0), 480, coordinates=Coordinates(latitude=35.659145, longitude=139.70074))
+        )
+
+        val day1 = Day(1,route)
+        val listOfEvents = CalendarAdapter().getListOfEvents(listOf(day1), calculatorInputs)
+        //cantidad de comidas = 3 eventos
+        //actividades cortas = 1 evento,
+        //actividad cortada por almuerzo = 2 eventos
+        assertEquals(listOfEvents.size,3+1+2)
+    }
+
+    @Test
+    fun `tokio con snack`() {
+        val request =
+            "{\"places\":[{\"name\":\"Shinjuku Prince Hotel\",\"coordinates\":{\"latitude\":35.694744,\"longitude\":139.70012},\"timeSpent\":null},{\"name\":\"NTT InterCommunication Center\",\"coordinates\":{\"latitude\":35.6829,\"longitude\":139.6874},\"timeSpent\":180},{\"name\":\"Tokyo Toy Museum\",\"coordinates\":{\"latitude\":35.689777,\"longitude\":139.71797},\"timeSpent\":120},{\"name\":\"Hachiko Square\",\"coordinates\":{\"latitude\":35.659145,\"longitude\":139.70074},\"timeSpent\":480},{\"name\":\"Hachiko Memorial Statue\",\"coordinates\":{\"latitude\":35.65907,\"longitude\":139.70068},\"timeSpent\":120}],\"travelMode\":\"BICYCLING\",\"time\":{\"startHour\":\"08:00\",\"finishHour\":\"22:00\",\"breakfast\":\"30\",\"lunch\":\"45\",\"snack\":30,\"dinner\":60,\"freeDays\":\"2\"}}"
+        val calculatorInputs: CalculatorInputs =
+            jacksonObjectMapper().readerFor(CalculatorInputs::class.java).readValue(request)
+
+        val route = mutableListOf<Place>(
+            Place(0, "Shinjuku Prince Hotel", mapOf(1 to 11, 2 to 9, 3 to 19, 4 to 19), 0, Coordinates(35.694744, 139.70012)),
+            Place(2, "Tokyo Toy Museum", mapOf(0 to 9, 1 to 16, 3 to 18, 4 to 18), 120, coordinates=Coordinates(latitude=35.689777, longitude=139.71797)),
+            Place(3, "Hachiko Square", mapOf(0 to 20, 1 to 17, 2 to 19, 4 to 0), 480, coordinates=Coordinates(latitude=35.659145, longitude=139.70074))
+        )
+
+        val day1 = Day(1,route)
+        val listOfEvents = CalendarAdapter().getListOfEvents(listOf(day1), calculatorInputs)
+        //cantidad de comidas = 4 eventos
+        //actividades cortas = 1 evento,
+        //actividad cortada por almuerzo y merienda = 4 eventos
+        //dias libres = 2
+        assertEquals(listOfEvents.size,4+1+4+2)
+    }
+
 
 }

@@ -28,6 +28,11 @@ class TripService(
     val googleApi: GoogleApi
 ) {
     fun calculateOptimalRoute(calculatorInputs: CalculatorInputs): TripServiceResponse {
+
+        validateMealTimes(calculatorInputs.time)
+        val maxDuration = calculateMaxDurationOfActivity(calculatorInputs)
+        calculatorInputs.places.map { p -> validateActivityTimes(p, maxDuration) }
+
         val places = getDurationBetween(calculatorInputs.places, calculatorInputs.travelMode)
         val bestCompleteRoute = calculateCompleteRoute(places)
         val optimalRouteInDays = splitCompleteRouteInDays(bestCompleteRoute, calculatorInputs)
@@ -39,11 +44,39 @@ class TripService(
         return TripServiceResponse(daysAmount, idOfKml, listOfEvents)
     }
 
+    fun validateActivityTimes(place: PlaceInput, maxDuration: Int) {
+        if (place.timeSpent!= null && place.timeSpent > maxDuration)
+            throw IllegalTripException("La duración de la actividad ${place.name} sobrepasa los límites del día")
+    }
+
+    fun calculateMaxDurationOfActivity(calculatorInputs: CalculatorInputs): Int {
+        var meals = listOf(
+            -Duration.between(calculatorInputs.time.startTime, calculatorInputs.time.finishTime).toMinutes().toInt(),
+            calculatorInputs.time.breakfast,
+            calculatorInputs.time.lunch,
+            calculatorInputs.time.snack,
+            calculatorInputs.time.dinner
+        )
+
+        return meals.fold(0) { total, item -> total - item }
+    }
+
+    fun validateMealTimes(times: TimeInput) {
+        var meals = listOf(
+            times.breakfast,
+            times.lunch,
+            times.snack,
+            times.dinner
+        )
+        meals.map { m ->  if (m > 240) throw IllegalTripException("La duración máxima de las comidas es de 4 horas")
+        }
+    }
+
     fun getDurationBetween(placesInputs: List<PlaceInput>, travelMode: TravelMode): List<Place> {
         return googleApi.getListOfPlaces(placesInputs, travelMode)
     }
 
-    private fun calculateCompleteRoute(places: List<Place>): Individual {
+    fun calculateCompleteRoute(places: List<Place>): Individual {
         val bestCompleteRoute = GeneticAlgorithm.run(triponometryProperties.geneticAlgorithm, places)
 
         println("Best: (Fitness = ${bestCompleteRoute.fitness}, Time = ${bestCompleteRoute.totalTime}) ${bestCompleteRoute.places.map { it.id }}")
@@ -74,7 +107,8 @@ class TripService(
     }
 
     fun calculateTimePerDay(time: TimeInput) =
-        (Duration.between(time.startTime, time.finishTime).toMinutes() - time.breakfast - time.lunch - time.snack - time.dinner).toInt()
+        (Duration.between(time.startTime, time.finishTime)
+            .toMinutes() - time.breakfast - time.lunch - time.snack - time.dinner).toInt()
 
 
     fun createRouteForDay(day: Day, activitiesNotInRoutes: MutableList<Place>, timePerDay: Int) {
@@ -170,7 +204,7 @@ class TripService(
             trip.calculatorInputs = newDraft.calculatorInputs
             trip.name = newDraft.name
 
-            if (newDraft.calculatorOutputs != null){
+            if (newDraft.calculatorOutputs != null) {
                 trip.calculatorOutputs = newDraft.calculatorOutputs
                 trip.status = TripStatus.ACTIVE
             }
@@ -191,11 +225,11 @@ class TripService(
         if (tripOptional.isPresent) {
             val trip = tripOptional.get()
 
-            if(trip.reviews.any { r -> r.fromUser(userId) }){
+            if (trip.reviews.any { r -> r.fromUser(userId) }) {
                 throw IllegalTripException("Ya opinaste sobre este viaje")
             }
 
-            val review = Review(ObjectId(),user,reviewRequest.stars,reviewRequest.done,reviewRequest.description)
+            val review = Review(ObjectId(), user, reviewRequest.stars, reviewRequest.done, reviewRequest.description)
             trip.reviews.add(review)
 
             tripRepository.save(trip).dto()
@@ -204,10 +238,10 @@ class TripService(
         throw IllegalTripException("El viaje al cuál querés opinar no existe")
     }
 
-    fun deleteDraft(userId: ObjectId, tripId: ObjectId){
+    fun deleteDraft(userId: ObjectId, tripId: ObjectId) {
         val user = userRepository.findById(userId).get()
-        val trip = tripRepository.findByUserAndId(user,tripId).get()
-        if( trip.status != TripStatus.DRAFT) {
+        val trip = tripRepository.findByUserAndId(user, tripId).get()
+        if (trip.status != TripStatus.DRAFT) {
             throw IllegalTripException("No es posible eliminar viajes que no sean borradores")
         }
         return tripRepository.delete(trip)

@@ -118,7 +118,11 @@ class MapCreator(private val googleApi: GoogleApi) {
         var road = ""
         results?.routes?.forEach { r ->
             r.legs.forEach { l ->
-                l.steps.forEach { s -> road += "\t\t\t${s.startLocation.lng},${s.startLocation.lat},0\n\t\t\t${s.endLocation.lng},${s.endLocation.lat},0\n" }
+                l.steps.forEach {
+                        s ->
+                    val coordinates = s.polyline.decodePath()
+                   coordinates.forEach{ c -> road += "\t\t\t${c.lng},${c.lat}\n" }
+                }
             }
         }
         return road
