@@ -35,6 +35,7 @@ class CalendarAdapter() {
     }
 
     fun getTravelTime(place: Place, id: Int): Int {
+        if (place.id.equals(id)) return 0
         return place.durations[id]!!
     }
 
@@ -47,34 +48,88 @@ class CalendarAdapter() {
         val defaultEvents = makeListOfDefaultEvents(inputs)
 
         for ((index, activity) in day.route.withIndex()) {
-            addDefaultEvent(cal, events, defaultEvents)
+            addDefaultEvent(cal, events, defaultEvents,null)
             if (index > 0) {
                 val travelTime = getTravelTime(day.route[index-1],activity.id)
                 cal.add(GregorianCalendar.MINUTE, travelTime)
-                events.add(createEventDto(activity.name, cal, GregorianCalendar.MINUTE, activity.timeSpent!!))
-                cal.add(GregorianCalendar.MINUTE, activity.timeSpent)
+
+                if(activity.timeSpent!! > 60){
+                    subdivideEvent(activity,cal,events, defaultEvents)
+                }else{
+                    events.add(createEventDto(activity.name, cal, GregorianCalendar.MINUTE, activity.timeSpent!!))
+                    cal.add(GregorianCalendar.MINUTE, activity.timeSpent!!)
+                }
             }
         }
 
         while (defaultEvents.isNotEmpty()) {
             cal.add(GregorianCalendar.MINUTE, 60)
             cal[java.util.Calendar.MINUTE] = 0
-            addDefaultEvent(cal, events, defaultEvents)
+            addDefaultEvent(cal, events, defaultEvents,null)
         }
         //Aumento el día para los siguientes eventos
         cal.add(GregorianCalendar.DAY_OF_MONTH, 1)
         return events
     }
 
-    fun addDefaultEvent(cal: GregorianCalendar, events: MutableList<EventDto>, defaultEvents: MutableList<EventTime>) {
-        if (defaultEvents.isNotEmpty()) {
-            var nextEvent = defaultEvents[0]
-            if (nextEvent.isBetween(cal.get(GregorianCalendar.HOUR_OF_DAY))) {
-                events.add(createEventDto(nextEvent.name, cal, GregorianCalendar.MINUTE, nextEvent.duration))
-                defaultEvents.removeFirst()
-                cal.add(GregorianCalendar.MINUTE, nextEvent.duration)
+    fun subdivideEvent(activity: Place, cal: GregorianCalendar, events: MutableList<EventDto>,defaultEvents: MutableList<EventTime>){
+
+        var place = activity.copy()
+
+        var activityTime = 60
+        var activityTimeLeft = activity.timeSpent!!
+
+        var auxCal = cal.clone() as GregorianCalendar
+
+        while(activityTimeLeft>=60) {
+            auxCal.add(GregorianCalendar.MINUTE, 60)
+            activityTimeLeft -= 60
+            if(needToAddDefaultEvent(auxCal,defaultEvents)) {
+
+                var minutesAux = 60 - cal.get(GregorianCalendar.MINUTE)
+                if (minutesAux == 60) {minutesAux = 0}
+                activityTime += minutesAux
+                activityTimeLeft -= minutesAux
+
+                val event = createEventDto(place.name, cal, GregorianCalendar.MINUTE, activityTime)
+                auxCal.add(GregorianCalendar.MINUTE, minutesAux)
+                events.add(event)
+                cal.add(GregorianCalendar.MINUTE, activityTime)
+                addDefaultEvent(cal,events,defaultEvents,auxCal)
+                activityTime = 60
+                continue
+            }
+            else {
+                activityTime += 60
             }
         }
+        //le resto los que se sumaron en el ultimo else
+        activityTime -= 60
+        val sum = activityTime + activityTimeLeft
+        if(sum > 0){
+            events.add(createEventDto(place.name, cal, GregorianCalendar.MINUTE, sum))
+            cal.add(GregorianCalendar.MINUTE, sum)
+        }
+
+    }
+
+
+    fun addDefaultEvent(cal: GregorianCalendar, events: MutableList<EventDto>, defaultEvents: MutableList<EventTime>, aux: GregorianCalendar?) {
+        if(needToAddDefaultEvent(cal,defaultEvents)){
+            var nextEvent = defaultEvents[0]
+            events.add(createEventDto(nextEvent.name, cal, GregorianCalendar.MINUTE, nextEvent.duration))
+            defaultEvents.removeFirst()
+            cal.add(GregorianCalendar.MINUTE, nextEvent.duration)
+            aux?.add(GregorianCalendar.MINUTE, nextEvent.duration)
+        }
+    }
+
+    fun needToAddDefaultEvent(auxCal: GregorianCalendar, defaultEvents: MutableList<EventTime>): Boolean {
+        if (defaultEvents.isNotEmpty()) {
+            var nextEvent = defaultEvents[0]
+            return nextEvent.isBetween(auxCal.get(GregorianCalendar.HOUR_OF_DAY))
+        }
+        return false
     }
 
     fun addFreeDay(cal: GregorianCalendar, events: MutableList<EventDto>, start: LocalTime, finish: LocalTime) {
@@ -87,8 +142,8 @@ class CalendarAdapter() {
     fun makeListOfDefaultEvents(inputs: CalculatorInputs): MutableList<EventTime> {
         val timeInputs = inputs.time
         var defaultEvents = mutableListOf<EventTime>()
-        if (timeInputs.breakfast != 0) defaultEvents.add(EventTime("Desayuno", 7, 11, timeInputs.breakfast))
-        if (timeInputs.lunch != 0) defaultEvents.add(EventTime("Almuerzo", 11, 16, timeInputs.lunch))
+        if (timeInputs.breakfast != 0) defaultEvents.add(EventTime("Desayuno", 5, 11, timeInputs.breakfast))
+        if (timeInputs.lunch != 0) defaultEvents.add(EventTime("Almuerzo", 12, 16, timeInputs.lunch))
         if (timeInputs.snack != 0) defaultEvents.add(EventTime("Merienda", 16, 19, timeInputs.snack))
         if (timeInputs.dinner != 0) defaultEvents.add(EventTime("Cena", 19, 22, timeInputs.dinner))
         return defaultEvents
